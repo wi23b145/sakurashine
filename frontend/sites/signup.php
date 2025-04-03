@@ -31,9 +31,9 @@
             <form action="php/registration.php" method="post">
                 <div class="row">
                     <div class="col-md-6">
-                        <label for="salutation">Anrede:</label>
+                        <label for="anrede">Anrede:</label>
 
-                        <select id="salutation" class="form-control" name="sal" required>
+                        <select id="anrede" class="form-control" name="anr" required>
                             <option></option>
                             <option>Frau</option>
                             <option>Herr</option>
@@ -43,23 +43,34 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <label for="firstname">Vorname:</label>
-                        <input  type="text" id="firstname" class="form-control" name="firstname" style="padding-right: 0;" placeholder="First Name" required>
+                        <label for="vorname">Vorname:</label>
+                        <input  type="text" id="vorname" class="form-control" name="vorname" style="padding-right: 0;" placeholder="Vorname" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="lastname">Nachname:</label>
-                        <input  type="text" id="lastname" class="form-control" name="lastname" style="padding-right: 0;" placeholder="Last Name" required>
+                        <label for="nachname">Nachname:</label>
+                        <input  type="text" id="nachname" class="form-control" name="nachname" style="padding-right: 0;" placeholder="Nachname" required>
                     </div>
                 </div>
 
                 <label for="email">Email:</label>
                 <input  type="email" id="email" class="form-control" name="email" placeholder="Email" required>
+                
+                
+                <label for="adresse">Adresse:</label>
+                <input  type="adresse" id="adresse" class="form-control" name="adresse" placeholder="Adresse" required>
 
-                <label for="username">Username:</label>
-                <input  type="text" id="username" class="form-control" name="username" placeholder="Username" required>
+                
+                <label for="plz">PLZ:</label>
+                <input  type="plz" id="plz" class="form-control" name="plz" placeholder="PLZ" required>
+               
+                <label for="ort">Ort:</label>
+                <input  type="ort" id="ort" class="form-control" name="ort" placeholder="Ort" required>
+               
+                <label for="benutzername">Username:</label>
+                <input  type="text" id="benutzername" class="form-control" name="benutzername" placeholder="Benutzername" required>
 
-                <label for="password">Passwort:</label>
-                <input  type="password" id="password" class="form-control" name="passwort" placeholder="Password" required>
+                <label for="passwort">Passwort:</label>
+                <input  type="password" id="passwort" class="form-control" name="passwort" placeholder="Passwort" required>
 
                 <label for="wpassword">Wiederholen Sie das Passwort:</label>
                 <input  type="password" id="wpassword" class="form-control" name="wpassword" placeholder="Repeat password" required>
