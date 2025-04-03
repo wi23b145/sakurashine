@@ -6,9 +6,10 @@
 
 <body>
 <header>
+<?php include '/htdocs/sakurashine/frontend/sites/navbar.php'; ?>
     <h1>Registrierung</h1>
 </header>
-<?php include("includes/nav.php");?>
+
 
 <main>
 
