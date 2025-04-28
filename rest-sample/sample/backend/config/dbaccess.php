@@ -1,5 +1,11 @@
 <?php
 
+$con = mysqli_connect('localhost', 'root', '', 'sakura_shine');
+
+if ($con -> connect_error){
+    $_SESSION['error'] = "Fehler bei der Verbindung zur Datenbank";
+}
+/*
 class Database {
     private $host = 'localhost';
     private $user = 'root';
@@ -46,4 +52,4 @@ class Database {
 // Datenbankverbindung aufrufen
 new Database();
 
-?>
+?>*/
