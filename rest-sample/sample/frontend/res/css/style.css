@@ -45,3 +45,37 @@ label{
 #reset{
     margin-top: 20px;
 }
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+}
+
+h1{
+    text-align: center;
+    background-color: #6c8094;
+    margin-top: 0;
+    padding: 20px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+
+.footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #264653;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+.footer p{
+    margin: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
