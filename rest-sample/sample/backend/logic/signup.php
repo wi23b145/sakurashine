@@ -1,5 +1,7 @@
 <?php
-require_once ('../config/dbaccess.php'); // Sicherstellen, dass dbaccess.php die DB-Verbindung enthält
+require_once '../config/dbaccess.php';
+$pdo = Db::connect();
+
 session_start();
 
 // Überprüfen, ob die Anfrage eine POST-Anfrage ist

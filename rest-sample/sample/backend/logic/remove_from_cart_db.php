@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once('../config/dbaccess.php');
+require_once '../config/dbaccess.php';
+$pdo = Db::connect();
+
 
 if (!isset($_SESSION['id'])) {
     header('Location: ../sites/login.html');

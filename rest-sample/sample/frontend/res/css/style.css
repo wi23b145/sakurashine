@@ -22,14 +22,17 @@ nav{
     margin-right: 10px;
 }
 
-.dropdown-menu{
-    width: 1px;
-    padding: 2px 2px 2px 2px;
-    z-index: 1050; /* Set a high z-index */
-    position: absolute; /* Ensure it is positioned above other elements */
-    margin-right: 10px;
-}
-
+.dropdown-menu {
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    z-index: 1050;
+    position: absolute;
+    display: none;
+  }
+  
+  .dropdown.show .dropdown-menu {
+    display: block;
+  }
 .container{
     margin-top: 20px;
 }

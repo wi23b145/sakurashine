@@ -1,6 +1,9 @@
 <?php
 session_start();
 header('Content-Type: application/json');
+require_once '../config/dbaccess.php';
+$pdo = Db::connect();
+
 
 // Wenn Session-Warenkorb nicht gesetzt, versuchen aus DB zu laden (falls eingeloggt)
 if (!isset($_SESSION['cart'])) {

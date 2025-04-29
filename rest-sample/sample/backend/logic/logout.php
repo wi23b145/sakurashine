@@ -1,11 +1,9 @@
 <?php
-    session_start();
-    require_once ('../config/dbaccess.php');
+session_start();
 
+unset($_SESSION['user']);
+session_destroy();
 
-    unset($_SESSION);
-    session_destroy();
-    header("Location: ../../frontend/index.html");
-
-    exit();
+header("Location: ../../frontend/index.html");
+exit();
 ?>
