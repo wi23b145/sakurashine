@@ -33,11 +33,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             exit;
         } else {
             $_SESSION['error'] = "Das Passwort ist falsch. Bitte versuchen Sie es erneut.";
-            //header("Location:../login.php");
+            header("Location:../../frontend/index.html");
         }
     } else {
         $_SESSION['error'] = "Kein Benutzer mit diesem Usernamen gefunden!";
-        //header("Location:../login.php");
+        header("Location:../../frontend/index.html");
     }
 
     $con->close();

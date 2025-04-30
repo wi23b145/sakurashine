@@ -2,6 +2,47 @@ body{
     margin: 0;
 }
 
+.container-fluid{
+    padding: 0;
+    margin: 0;
+    background-image: url("../img/senbon-torii-6389421_1920.jpg"); 
+    position: absolute;
+    opacity: 0.9;
+    height: 100%;
+    
+}
+
+main{
+    margin: 0;
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+#intro{
+    font-size: 4rem;
+    font-family: 'Monaco';
+    color: rgba(255,255,255,1);
+    text-align: center;
+    opacity: 1;
+}
+
+#text{
+    position: relative;
+    opacity: 1;
+}
+
+#intro p{
+    opacity: 1;
+}
+
+.intro{
+    background-color: black;
+    margin-top: 20%;
+    opacity: 0.7;
+    padding-top: 3em;
+    padding-bottom: 3em;
+}
+
 nav{
     background-color: #264653;
 }
@@ -58,6 +99,32 @@ h1{
     padding: 20px;
     margin-bottom: 20px;
     color: white;
+}
+
+#checkout-btn{
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #264653;
+    color: white;
+}
+
+.add-to-cart{
+    border: none;
+    padding: 10px;
+}
+
+.remove-item{
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #6c8094;
+    color: white;
+}
+
+tbody, td, tfoot, th, thead, tr {
+    padding: 20px;
+
 }
 
 
