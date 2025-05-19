@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['user'] = $user;
 
         if ($user['ist_admin'] == 1) {
-            header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
+            header("Location: /sakurashine/rest-sample/sample/frontend/sites/admin_dashboard.php");
         } else {
             header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
             echo "FALSCH";

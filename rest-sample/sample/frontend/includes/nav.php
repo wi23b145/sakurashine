@@ -7,12 +7,18 @@
       <li class="nav-item">
         <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/produkte.php">PRODUKTE</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/signup.php">SIGN UP</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/login.php">SIGN IN</a>
-      </li>
+      <?php 
+        if(!isset($_SESSION['user'])){
+            echo "<li class='nav-item'>
+              <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signup.php'>SIGN UP</a>
+            </li>";}
+        ?>
+        <?php 
+        if(!isset($_SESSION['user'])){
+            echo "<li class='nav-item'>
+              <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/login.php'>SIGN IN</a>
+            </li>";}
+        ?>
       <li class="nav-item ms-auto">
         <div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" 
