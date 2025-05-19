@@ -3,7 +3,7 @@ session_start();
 require_once('../config/dbaccess.php');
 
 if (!isset($_SESSION['id'])) {
-    header('Location: ../sites/login.html');
+    header('Location: ../../../../frontend/sites/login.php');
     exit;
 }
 
@@ -15,6 +15,6 @@ $stmt = $con->prepare($sql);
 $stmt->bind_param("ii", $user_id, $produkt_id);
 $stmt->execute();
 
-header('Location: ../sites/warenkorb.php');
+header('Location: ../../../../frontend/sites/cart.php');
 exit;
 ?>

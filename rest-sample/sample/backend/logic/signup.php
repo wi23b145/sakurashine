@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Überprüfen, ob die Passwörter übereinstimmen
     if ($passwort !== $wpassword) {
         $_SESSION['error'] = "Passwörter stimmen nicht überein.";
-        header("Location: ../frontend/sites/signup.html");
+        header("Location: ../../../sample/frontend/sites/signup.php");
         exit;
     }
 
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->num_rows > 0) {
         $_SESSION['error'] = "Benutzername oder E-Mail-Adresse existiert bereits.";
-        header("Location: ../frontend/sites/signup.html");
+        header("Location: ../../../sample/frontend/sites/signup.php");
         exit;
     }
 
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Erfolgreiche Registrierung
         $_SESSION['success'] = "Das Konto wurde erfolgreich erstellt! Melden Sie sich doch gleich hier an.";
-        header("Location: ../../frontend/sites/login.html");
+        header("Location: ../../../sample/frontend/sites/login.php");
         exit;
     } else {
         echo "Fehler bei der SQL-Abfrage: " . $con->error;

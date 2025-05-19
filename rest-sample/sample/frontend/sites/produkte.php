@@ -1,54 +1,13 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-        rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
-        crossorigin="anonymous">
-
-  <!-- Bootstrap 5 JS Bundle (inkl. Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <link href="../res/css/style.css" rel="stylesheet">
-
-  <title>Produkte – Sakura Shine</title>
-</head>
+  <head>
+    <?php include("../includes/header.php");?>
+    <title>Produkte – Sakura Shine</title>
+  </head>
 
 <body class="bg-light">
   <script src="../js/produkte.js"></script>
-  <nav class="navbar">
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/index.html">HOME</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="produkte.html">PRODUKTE</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="signup.html">SIGN UP</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="login.html">SIGN IN</a>
-      </li>
-      <li class="nav-item ms-auto">
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" 
-            data-bs-toggle="dropdown" aria-expanded="false">
-            -
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="../backend/logic/logout.php">SIGN OUT</a></li>
-            <li><a class="dropdown-item" href="cart.html">CART</a></li>
-          </ul>
-        </div>
-      </li>
-    </ul>
-  </nav>
+  <?php include("../includes/nav.php");?>
   <div class="container py-5">
     <h1>Alle Produkte</h1>
     <div class="row row-cols-1 row-cols-md-3 g-4">

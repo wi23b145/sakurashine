@@ -64,7 +64,6 @@ nav{
 }
 
 .dropdown-menu{
-    width: 1px;
     padding: 2px 2px 2px 2px;
     z-index: 1050; /* Set a high z-index */
     position: absolute; /* Ensure it is positioned above other elements */

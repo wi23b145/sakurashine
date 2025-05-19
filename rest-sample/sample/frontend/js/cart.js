@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (checkoutButton) {
     checkoutButton.addEventListener('click', function() {
       console.log("Checkout-Button wurde geklickt"); // Test
-      window.location.href = '../sites/checkout.html'; // Weiterleitung
+      window.location.href = '../sites/checkout.php'; // Weiterleitung
     });
   } else {
     console.error("Checkout-Button nicht gefunden!"); // Falls Button fehlt

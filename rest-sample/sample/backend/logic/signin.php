@@ -1,45 +1,35 @@
 <?php
 session_start();
-require_once ('../config/dbaccess.php'); 
+require_once '../config/dbaccess.php'; // enthält $con
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $username = $_POST['username'];
-    $passwort = $_POST['passwort'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST['username'] ?? '');
+    $passwort = $_POST['passwort'] ?? '';
 
-    $sql = "SELECT * FROM users WHERE benutzername = ?";
-    $stmt = $con->prepare($sql);
+    $stmt = $con->prepare("SELECT * FROM users WHERE benutzername = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
-    if($result->num_rows == 1){
-        $user = $result->fetch_assoc();
-        $hashed_password = $user['passwort'];
 
-        if(password_verify($passwort, $hashed_password)){
-            // Session-Variablen setzen
-            $_SESSION['benutzername'] = $user["benutzername"];
-            $_SESSION['id'] = $user["id"];
-            $_SESSION['vorname'] = $user["vorname"];
-            $_SESSION['nachname'] = $user["nachname"];
-            $_SESSION['email'] = $user["email"];
-            $_SESSION['anrede'] = $user["anrede"];
-            $_SESSION['ist_admin'] = $user["ist_admin"];  // NEU: Rolle merken
+    if ($user && password_verify($passwort, $user['passwort'])) {
+        $_SESSION['user'] = $user;
 
-            $_SESSION['success'] = "WILLKOMMEN, " . htmlspecialchars($username) . "!";
-
-            // Weiterleitung zur Startseite
-            header("Location:../../frontend/index.html");
-            exit;
+        if ($user['ist_admin'] == 1) {
+            header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
         } else {
-            $_SESSION['error'] = "Das Passwort ist falsch. Bitte versuchen Sie es erneut.";
-            header("Location:../../frontend/index.html");
+            header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
+            echo "FALSCH";
         }
+        exit;
     } else {
-        $_SESSION['error'] = "Kein Benutzer mit diesem Usernamen gefunden!";
-        header("Location:../../frontend/index.html");
+        $_SESSION['error'] = "Benutzername oder Passwort ist falsch.";
+        header("Location: /sakurashine/rest-sample/sample/frontend/sites/login.php");
+        exit;
     }
+    
 
-    $con->close();
 }
+
 ?>
