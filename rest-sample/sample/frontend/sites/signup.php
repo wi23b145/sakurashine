@@ -58,6 +58,10 @@
                     <label for="password">Passwort:</label>
                     <input  type="password" id="password" class="form-control" name="passwort" placeholder="Passwort" required>
                             
+                    <label for="zahlung">Zahlungsinformationen:</label>
+                    <input type="text" id="zahlung" class="form-control" name="zahlung" placeholder="Zahlungsinformationen (z. B. IBAN, PayPal)" required>
+
+
                     <label for="wpassword">Wiederholen Sie das Passwort:</label>
                     <input  type="password" id="wpassword" class="form-control" name="wpassword" placeholder="Wiederhole Passwort" required>
 
@@ -69,6 +73,7 @@
         </div>
     </div>
 </main>
+<script src="../js/passwordcheck.js"></script>
 <div class="footer">
     <p>@2025 SakuraShine</p>
   </div>
