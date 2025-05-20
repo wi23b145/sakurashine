@@ -7,7 +7,13 @@
       <li class="nav-item">
         <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/produkte.php">PRODUKTE</a>
       </li>
-      <?php 
+        <?php 
+          if(isset($_SESSION['user'])){
+              echo "<li class='nav-item'>
+                <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/myAccount.php'>Mein Konto</a>
+              </li>";}
+        ?>
+        <?php 
         if(!isset($_SESSION['user'])){
             echo "<li class='nav-item'>
               <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signup.php'>SIGN UP</a>
@@ -33,8 +39,15 @@
 
                 } 
             ?>
-            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a></li>
+            
             <li><a class="dropdown-item" href="../sites/cart.php">CART</a></li>
+            <?php 
+              if (isset($_SESSION['user'])) {
+                  echo "<li><a class='dropdown-item' href='/sakurashine/rest-sample/sample/frontend/sites/editUser.php'>Profil bearbeiten</a></li>";
+              }
+            ?>
+
+            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a></li>
           </ul>
         </div>
       </li>

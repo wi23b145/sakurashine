@@ -1,55 +1,23 @@
-<?php
+<?php session_start();
+
 
 $con = mysqli_connect('localhost', 'root', '', 'sakura_shine');
 
 if ($con -> connect_error){
     $_SESSION['error'] = "Fehler bei der Verbindung zur Datenbank";
 }
-/*
-class Database {
-    private $host = 'localhost';
-    private $user = 'root';
-    private $pass = '';
-    private $dbname = 'sakura_shine';
-    private $charset = 'utf8mb4';
 
-    private $pdo;
-    private $error;
+if (!isset($_SESSION['user']) && isset($_COOKIE['login_token'])) {
+    $token = $_COOKIE['login_token'];
 
-    public function __construct() {
-        $dsn = "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=" . $this->charset;
+    $stmt = $con->prepare("SELECT * FROM users WHERE login_token = ?");
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ];
-
-        try {
-            $this->pdo = new PDO($dsn, $this->user, $this->pass, $options);
-            echo "DB Verbindung erfolgreich!"; // Erfolgreiche Verbindungsmeldung
-        } catch (PDOException $e) {
-            $this->error = $e->getMessage();
-            echo "Datenbankverbindung fehlgeschlagen: " . $this->error;
-        }
-    }
-
-    public function query($sql, $params = []) {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt;
-    }
-
-    public function lastInsertId() {
-        return $this->pdo->lastInsertId();
-    }
-
-    public function closeConnection() {
-        $this->pdo = null;
+    if ($user) {
+        $_SESSION['user'] = $user;
     }
 }
-
-// Datenbankverbindung aufrufen
-new Database();
-
-?>*/
+?>

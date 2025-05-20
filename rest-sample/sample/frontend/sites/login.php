@@ -15,11 +15,16 @@
                 <div class="col-4 form">
                     <form action="../../backend/logic/signin.php" method="post">
                         <label for="username">Username:</label>
-                        <input  type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                        <input  type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['username'] ?? ''; ?>" required>
 
                         <label for="passwort">Passwort:</label>
-                        <input  type="passwort" class="form-control" id="passwort" name="passwort" placeholder="Password" required>
+                        <input  type="password" class="form-control" id="passwort" name="passwort" placeholder="Password" required>
                         <br>
+
+                        <label>
+                            <input type="checkbox" name="remember" <?php if (isset($_COOKIE['username'])) echo 'checked'; ?>>
+                            Login merken
+                         </label>
 
                         <input type="submit" class="btn btn-primary" value="Login" id="submit">
                         <input type="reset" class="btn btn-primary" value="Reset" id="reset">
