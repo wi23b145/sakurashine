@@ -47,7 +47,11 @@
             ?>
 
             <li><a class="dropdown-item" href="../sites/cart.php">CART</a></li>
-            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a></li>
+            <?php 
+              if (isset($_SESSION['user'])) {
+                  echo "<li><a class='dropdown-item' href='/sakurashine/rest-sample/sample/backend/logic/logout.php'>SIGN OUT</a></li>";
+              }
+            ?>
             
           </ul>
         </div>
