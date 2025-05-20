@@ -10,7 +10,7 @@
       <?php 
           if(isset($_SESSION['user'])){
               echo "<li class='nav-item'>
-                <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/myAccount.php'>Mein Konto</a>
+                <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/myAccount.php'>MEIN KONTO</a>
               </li>";}
         ?>
         <?php 
@@ -22,7 +22,7 @@
         <?php 
           if(!isset($_SESSION['user'])){
               echo "<li class='nav-item'>
-            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signin.php'>SIGN IN</a>
+            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/login.php'>SIGN IN</a>
           </li>";}
         ?>
    
