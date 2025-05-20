@@ -22,7 +22,7 @@
         <?php 
           if(!isset($_SESSION['user'])){
               echo "<li class='nav-item'>
-            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signup.php'>SIGN UP</a>
+            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signin.php'>SIGN IN</a>
           </li>";}
         ?>
    
