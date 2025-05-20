@@ -16,11 +16,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($user && password_verify($passwort, $user['passwort'])) {
         $_SESSION['user'] = $user;
 
+         if (isset($_POST['remember'])) {
+            $token = bin2hex(random_bytes(32)); // sicherer Zufallswert
+            setcookie('login_token', $token, time() + (30 * 24 * 60 * 60), "/");
+
+            $stmt = $con->prepare("UPDATE users SET login_token = ? WHERE id = ?");
+            $stmt->bind_param("si", $token, $user['id']);
+            $stmt->execute();
+        }
+
+
         if ($user['ist_admin'] == 1) {
-            header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
+            header("Location: /sakurashine/rest-sample/sample/frontend/sites/admin_dashboard.php");
         } else {
             header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
-            echo "FALSCH";
         }
         exit;
     } else {
