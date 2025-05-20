@@ -11,6 +11,7 @@
         <h1 class="mb-4">Willkommen im Adminbereich!</h1>
         <a class="btn btn-primary mb-3" href="admin_customers.php">Kund*innen verwalten</a>
         <a class="btn btn-primary mb-3" href="admin_produkte.php">Produkte verwalten</a>
+        <a class="btn btn-primary mb-3" href="admin_gutscheine.php">Gutscheine verwalten</a>
     </div>
 
     <div class="footer">
