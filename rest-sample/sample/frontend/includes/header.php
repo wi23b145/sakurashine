@@ -8,6 +8,9 @@
 
 <link href="/sakurashine/rest-sample/sample/frontend/res/css/style.css" rel="stylesheet">
 
+
+
+
 <!-- Bootstrap 5 JS Bundle (inkl. Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
