@@ -34,7 +34,12 @@ switch ($method) {
         } else {
             $res = $con->query("SELECT * FROM Produkte ORDER BY erstellt_am DESC");
             $produkte = $res->fetch_all(MYSQLI_ASSOC);
+                foreach ($produkte as &$produkt) {
+                    $produkt['preis'] = (float) $produkt['preis'];  // Preis als Zahl casten
+                }
             sendJson($produkte);
+            header('Content-Type: application/json');
+            exit;
         }
         break;
 
