@@ -16,9 +16,20 @@ require_once("../../backend/logic/myaccountfunction.php");
         <div class="row registrationrow">
             <div class="col-md-2"></div>
             <div class="col-8 form">
+            <?php if ($lastBestellungId): ?>
+    <div class="container mt-3">
+        <form action="invoice.php" method="get" target="_blank">
+            <input type="hidden" name="bestellung_id" value="<?= htmlspecialchars($lastBestellungId) ?>">
+            <button type="submit" class="btn btn-primary">Rechnung für letzte Bestellung anzeigen</button>
+        </form>
+    </div>
+<?php else: ?>
+    <p>Keine Bestellungen gefunden.</p>
+<?php endif; ?>
                 <form action="../../backend/logic/myaccount.php" method="post">
                     <div class="row">
                         <div class="col-md-6">
+                            
                             <label for="anrede">Anrede:</label>          
 
                             <select id="anrede" class="form-control" name="anrede" required>
@@ -151,6 +162,7 @@ require_once("../../backend/logic/myaccountfunction.php");
                     <input type="reset" class="btn btn-primary" value="Reset" id="reset">
                 </form>
             </div>
+            
             <div class="col-md-2"></div>
         </div>
     </div>
