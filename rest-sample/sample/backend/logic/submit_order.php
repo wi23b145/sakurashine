@@ -1,68 +1,89 @@
 <?php
-// Datenbankverbindung (ggf. in config.php auslagern)
-$pdo = new PDO("mysql:host=localhost;dbname=sakura_shine;charset=utf8mb4", "root", "");
+// submit_order.php
+header('Content-Type: application/json');
+$data = json_decode(file_get_contents('php://input'), true);
+
+$name     = $data['name'] ?? '';
+$address  = $data['address'] ?? '';
+$plz      = $data['plz'] ?? '';
+$ort      = $data['ort'] ?? '';
+$zahlung  = $data['zahlungsmethode'] ?? '';
+$warenkorb = $data['warenkorb'] ?? [];
+$code     = $data['gutschein'] ?? '';
+
+if (!$name || !$address || !$plz || !$ort || !$zahlung || empty($warenkorb)) {
+    echo json_encode(['success'=>false, 'message'=>'Unvollständige Daten']);
+    exit;
+}
+
+// DB-Verbindung
+$pdo = new PDO("mysql:host=localhost;dbname=sakura_shine;charset=utf8mb4","root","");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Formulardaten empfangen
-$name     = $_POST['name']     ?? '';
-$adresse  = $_POST['address']  ?? '';
-$plz      = $_POST['plz']      ?? '';
-$ort      = $_POST['ort']      ?? '';
-$zahlung  = $_POST['zahlung']  ?? '';
-$warenkorb = json_decode($_POST['warenkorb'] ?? '', true);
-
-// Validierung
-if (!$name || !$adresse || !$plz || !$ort || !$zahlung || !$warenkorb || !is_array($warenkorb)) {
-    die("Unvollständige Bestellung.");
+// 1) Summe berechnen
+$summe = 0;
+foreach ($warenkorb as $p) {
+    $summe += $p['menge'] * $p['preis'];
 }
 
-// Schritt 1: Bestellung einfügen
-$gesamtbetrag = 0;
-foreach ($warenkorb as $produkt) {
-    $gesamtbetrag += $produkt['menge'] * $produkt['preis'];
+// 2) Gutschein validieren (falls angegeben)
+$rabattBetrag = 0.0;
+if ($code !== '') {
+    $stmt = $pdo->prepare("
+      SELECT typ, rabatt_prozent, geldwert, gueltig_bis, eingelöst
+        FROM Gutscheine
+       WHERE code = ? AND eingelöst = 0
+    ");
+    $stmt->execute([$code]);
+    $g = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$g) {
+        echo json_encode(['success'=>false, 'message'=>'Ungültiger oder bereits eingelöster Code']);
+        exit;
+    }
+    if ($g['gueltig_bis'] < date('Y-m-d')) {
+        echo json_encode(['success'=>false, 'message'=>'Gutschein abgelaufen']);
+        exit;
+    }
+
+    if ($g['typ'] === 'percent') {
+        $rabattBetrag = $summe * ($g['rabatt_prozent'] / 100);
+    } else { // fixed
+        $rabattBetrag = (float)$g['geldwert'];
+    }
+    // nie unter 0
+    if ($rabattBetrag > $summe) {
+        $rabattBetrag = $summe;
+    }
+    // Gutschein als eingelöst markieren
+    $upd = $pdo->prepare("UPDATE Gutscheine SET eingelöst = 1 WHERE code = ?");
+    $upd->execute([$code]);
 }
 
-$insertBestellung = $pdo->prepare("
-    INSERT INTO bestellungen (user_id, bestellstatus, gesamtpreis, erstellt_am, zahlungsmethode)
-    VALUES (?, ?, ?, NOW(), ?)
-");
-$insertBestellung->execute([$name, 'Neu', $gesamtbetrag, $zahlung]);
-$bestellungId = $pdo->lastInsertId();
+// Finale Summe
+$finalSumme = $summe - $rabattBetrag;
 
-// Schritt 2: Bestellpositionen speichern
-$insertPosition = $pdo->prepare("
-    INSERT INTO bestellpositionen (bestellung_id, produkt_id, menge, einzelpreis)
-    VALUES (?, ?, ?, ?)
+// 3) Bestellung in Bestellungen‐Tabelle
+$stmt = $pdo->prepare("
+  INSERT INTO Bestellungen
+    (user_id, bestellstatus, gesamtpreis, erstellt_am, zahlungsmethode)
+  VALUES (?, 'offen', ?, NOW(), ?)
 ");
+// hier user_id ggf. aus Session
+$userId = $_SESSION['user']['id'] ?? null;
+$stmt->execute([$userId, $finalSumme, $zahlung]);
+$bid = $pdo->lastInsertId();
 
-foreach ($warenkorb as $produkt) {
-    $insertPosition->execute([
-        $bestellungId,
-        $produkt['id'],
-        $produkt['menge'],
-        $produkt['preis']
-    ]);
+// 4) Positionen speichern
+$stmtPos = $pdo->prepare("
+  INSERT INTO Bestellpositionen
+    (bestellung_id, produkt_id, menge, einzelpreis)
+  VALUES (?, ?, ?, ?)
+");
+foreach ($warenkorb as $p) {
+    $stmtPos->execute([$bid, $p['id'], $p['menge'], $p['preis']]);
 }
 
-// Schritt 3: Rechnung erstellen
-$insertRechnung = $pdo->prepare("
-    INSERT INTO rechnungen (
-        bestellung_id, rechnung_datum, rechnung_name,
-        rechnung_adresse, zahlung_methode, gesamtbetrag,
-        steuern, pdf_pfad, status
-    ) VALUES (?, NOW(), ?, ?, ?, ?, 0.00, '', 'offen')
-");
-
-$insertRechnung->execute([
-    $bestellungId,
-    $name,
-    "$adresse, $plz $ort",
-    $zahlung,
-    $gesamtbetrag
+echo json_encode([
+  'success'    => true,
+  'finalSumme' => number_format($finalSumme, 2, ',', '.')
 ]);
-
-// Ausgabe (könnte z. B. auch ein Redirect sein)
-echo "<h2>Vielen Dank für Ihre Bestellung, $name!</h2>";
-echo "<p>Bestellnummer: $bestellungId</p>";
-echo "<p>Gesamtsumme: €" . number_format($gesamtbetrag, 2, ',', '.') . "</p>";
-?>

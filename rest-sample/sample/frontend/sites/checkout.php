@@ -55,7 +55,12 @@
                   <option value="Überweisung">Überweisung</option>
                 </select>
                 
-                <br><br>
+                <br>
+
+                <label for="gutschein">Gutscheincode (optional):</label>
+<input type="text" id="gutschein" name="gutschein" class="form-control" placeholder="Code eingeben">
+
+  <br>
 
 
                 <input type="submit" class="btn btn-primary" value="Checkout" id="checkout">
