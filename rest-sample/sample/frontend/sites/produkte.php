@@ -31,7 +31,7 @@
             <h5 class="card-title">Sailormoon</h5>
             <p class="card-text">Produktbeschreibung für Sailormoon.</p>
             <p><strong>Preis: 4,99 €</strong></p>
-            <button class="add-to-cart" data-id="1" data-name="Sailormoon" data-preis="4,99 " >In den Warenkorb</button>
+            <button class="add-to-cart" data-id="2" data-name="Sailormoon" data-preis="4,99 " >In den Warenkorb</button>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@
             <h5 class="card-title">Luckfrog</h5>
             <p class="card-text">Produktbeschreibung für Luckfrog.</p>
             <p><strong>Preis: 4,99 €</strong></p>
-            <button class="add-to-cart" data-id="1" data-name="Luckfrog" data-preis="4,99 " >In den Warenkorb</button>
+            <button class="add-to-cart" data-id="3" data-name="Luckfrog" data-preis="4,99 " >In den Warenkorb</button>
           </div>
         </div>
       </div>
