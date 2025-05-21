@@ -88,7 +88,7 @@ require_once("../../backend/logic/myaccountfunction.php");
                     </div>
 
                     <div class="row">
-                        <div class="form-group mb-3">
+                        <div class="form-group col-md-6 mb-3">
                             <label for="plz">PLZ:</label>
                             <div id="plz_display">
                                 <span><?= maskiere($_SESSION['user']['plz']) ?></span>
@@ -101,7 +101,7 @@ require_once("../../backend/logic/myaccountfunction.php");
                                     value="<?= htmlspecialchars($_SESSION['user']['plz']) ?>">
                         </div>
 
-                       <div class="form-group mb-3">
+                       <div class="form-group col-md-6 mb-3">
                             <label for="ort">Ort:</label>
                             <div id="ort_display">
                                 <span><?= maskiere($_SESSION['user']['ort']) ?></span>
