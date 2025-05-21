@@ -19,9 +19,7 @@
       <th>Bild</th>
       <th>Name</th>
       <th>Beschreibung</th>
-      <th>Bewertung</th>
       <th>Preis</th>
-      <th>Aktionen</th>
     </tr>
     <tr>
       <!-- Eingabefelder unter den Spaltenüberschriften -->
@@ -30,7 +28,6 @@
       </th>
       <th><input type="text" id="neuName" name="neuName" class="form-control form-control-sm" maxlength="100" /></th>
       <th><input type="text" id="neuBeschreibung" name="neuBeschreibung" class="form-control form-control-sm" /></th>
-      <th><input type="number" id="neuBewertung" name="neuBewertung" class="form-control form-control-sm" min="0" max="5" step="0.1" /></th>
       <th><input type="number" id="neuPreis" name="neuPreis" class="form-control form-control-sm" min="0" step="0.01" /></th>
       <th>
         <button id="btnNeuSpeichern" class="btn btn-sm btn-success">Neu speichern</button>
@@ -61,10 +58,6 @@
           <div class="mb-3">
             <label for="beschreibung" class="form-label">Beschreibung *</label>
             <textarea class="form-control" id="beschreibung" name="beschreibung" required></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="bewertung" class="form-label">Bewertung (0-5)</label>
-            <input type="number" class="form-control" id="bewertung" name="bewertung" min="0" max="5" step="0.1" />
           </div>
           <div class="mb-3">
             <label for="preis" class="form-label">Preis *</label>

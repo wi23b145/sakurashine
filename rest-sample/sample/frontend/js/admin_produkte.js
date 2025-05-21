@@ -4,21 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function ladeProdukte() {
   try {
-    const response = await fetch('../../backend/api/products.php'); // <-- Hier der API-Endpunkt
+    const response = await fetch('../../backend/api/products.php'); // Pfad an dein Backend anpassen
+    if (!response.ok) throw new Error('Fehler: ' + response.status);
+
     const produkte = await response.json();
 
-    const container = document.getElementById('produktListe');
-    container.innerHTML = produkte.map(p => `
-      <div>
-        <h3>${p.name}</h3>
-        <p>${p.beschreibung}</p>
-        <p>Preis: €${p.preis.toFixed(2)}</p>
-      </div>
-    `).join('');
+    const tbody = document.getElementById('produktListe');
+    tbody.innerHTML = ''; // Tabelle zuerst leeren
+
+    produkte.forEach(p => {
+      const bildPfad = "/res/img/" + p.bild; // Automatischer Pfad zum Bild
+      tbody.innerHTML += `
+        <tr>
+          <td><img src="${bildPfad}" alt="${p.name}" style="max-width: 80px;"></td>
+          <td>${p.name}</td>
+          <td>${p.beschreibung}</td>
+          <td>€${Number(p.preis).toFixed(2)}</td>
+        </tr>
+      `;
+    });
   } catch (err) {
     console.error('Fehler beim Laden der Produkte:', err);
   }
 }
+
+
 
 document.getElementById('bild').addEventListener('change', function(event) {
   const [file] = event.target.files;
