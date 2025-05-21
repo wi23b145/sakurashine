@@ -19,6 +19,23 @@ function maskiere($text) {
             <div class="col-8 form">
                 <form action="../../backend/logic/changedata.php" method="post">
                     <div class="row">
+                         <?php if (isset($_SESSION['error'])): ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($_SESSION['error']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php unset($_SESSION['error']); ?>
+                            <?php endif; ?>
+
+                            <?php if (isset($_SESSION['success'])): ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($_SESSION['success']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php unset($_SESSION['success']); ?>
+                            <script src="../js/message.js"></script>
+                        <?php endif; ?>
+                    
                         <div class="col-md-6">
                             <label for="anrede">Anrede:</label>          
 

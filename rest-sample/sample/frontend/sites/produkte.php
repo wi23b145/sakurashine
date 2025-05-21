@@ -10,6 +10,8 @@
   <?php include("../includes/nav.php");?>
   <div class="container py-5">
     <h1>Alle Produkte</h1>
+    <div id="feedback-area" class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050; width: auto;"></div>
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <div class="col">

@@ -17,7 +17,27 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
-      alert('Produkt wurde zum Warenkorb hinzugefügt!');
+      zeigeNachricht('Produkt wurde zum Warenkorb hinzugefügt!', 'success');
+
+      function zeigeNachricht(text, typ = 'success') {
+  const container = document.getElementById('feedback-area');
+  const alertBox = document.createElement('div');
+  alertBox.className = `alert alert-${typ} alert-dismissible fade show`;
+  alertBox.setAttribute('role', 'alert');
+  alertBox.innerHTML = `
+    ${text}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  container.appendChild(alertBox);
+
+  // Automatisch nach 3 Sekunden entfernen
+  setTimeout(() => {
+    alertBox.classList.remove('show');
+    alertBox.classList.add('hide');
+    setTimeout(() => alertBox.remove(), 300);
+  }, 3000);
+}
+
     });
   });
 });

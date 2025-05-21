@@ -27,9 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
         if ($user['ist_admin'] == 1) {
+            $_SESSION['success'] = "Hallo Admin!";
             header("Location: /sakurashine/rest-sample/sample/frontend/sites/admin_dashboard.php");
+            
         } else {
+            $_SESSION['success'] = "Du hast dich erfolgreich angemeldet!";
             header("Location: /sakurashine/rest-sample/sample/frontend/index.php");
+            
         }
         exit;
     } else {

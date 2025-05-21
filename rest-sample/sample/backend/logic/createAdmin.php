@@ -34,9 +34,9 @@ if ($result->num_rows === 0) {
     $ist_aktiv = 1;
 
     if ($stmt->execute()) {
-        echo "✅ Admin wurde erfolgreich erstellt!";
+        $_SESSION['success'] = "Admin erfolgreich erstelle!";
     } else {
-        echo "❌ Fehler beim Einfügen: " . $stmt->error;
+        $_SESSION['error'] = "Du hast dich erfolgreich angemeldet!";;
     }
 
     $stmt->close();
