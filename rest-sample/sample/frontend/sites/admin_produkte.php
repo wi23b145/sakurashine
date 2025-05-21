@@ -142,7 +142,6 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
   <?php include("../includes/header.php");?>
   <title>Produkte verwalten</title>
   <style>
-    body { font-family: Arial; padding:20px; }
     .errors { color:red; }
     table { width:100%; border-collapse:collapse; margin-top:20px; }
     th, td { border:1px solid #ccc; padding:8px; }
@@ -234,7 +233,9 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
         <tr>
           <td>
             <?php if ($row['bild']): ?>
-              <img src="../<?= htmlspecialchars($row['bild']) ?>" class="thumb" alt="">
+              <img src="../res/img/<?= htmlspecialchars($row['bild']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" style="max-width: 80px;">
+
+
             <?php endif ?>
           </td>
           <td><?= htmlspecialchars($row['name']) ?></td>
@@ -250,5 +251,6 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
       </tbody>
     </table>
   </div>
+  
 </body>
 </html>
