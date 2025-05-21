@@ -33,7 +33,7 @@
       <div class="col-2"></div>
       <div class="col-8">
          <p id="cart-total">Gesamtsumme: €0.00</p>
-         <a href="checkout.php" class="btn btn-primary" role="button">Zur Kasse</a>
+         <a href="checkout.php" class="btn btn-primary" id="checkout-btn" role="button">Zur Kasse</a>
       </div>
       <div class="col-2"></div>
     </div>
