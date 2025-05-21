@@ -7,16 +7,57 @@ require_once("../../backend/logic/myaccountfunction.php");
   <head>
     <?php include("../includes/header.php");?>
     <script src="../js/myAccount.js"></script>
+    
     <title>Daten bearbeiten</title>
   </head>
 <body>
     <?php include("../includes/nav.php");?>
 <main>
     <div class="container">
+        <div id="bestellungen">
+            <form action="/sakurashine/rest-sample/sample/backend/logic/myOrders.php" method="post">
+                <h1>Meine Bestellungen</h1>
+                <?php if (isset($_SESSION['orders']) && count($_SESSION['orders']) > 0): ?>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Erstellt am</th>
+                        <th>Status</th>
+                        <th>Gesamtpreis</th>
+                        <th>Name</th>
+                        <th>Adresse</th>
+                        <th>PLZ</th>
+                        <th>Ort</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($_SESSION['orders'] as $order): ?>
+                        <tr>
+                        <td><?= htmlspecialchars($order['erstellt_am']) ?></td>
+                        <td><?= htmlspecialchars($order['bestellstatus']) ?></td>
+                        <td>€ <?= number_format($order['gesamtpreis'], 2, ',', '.') ?></td>
+                        <td><?= htmlspecialchars($order['name']) ?></td>
+                        <td><?= htmlspecialchars($order['adresse']) ?></td>
+                        <td><?= htmlspecialchars($order['plz']) ?></td>
+                        <td><?= htmlspecialchars($order['ort']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php else: ?>
+                <p>Keine Bestellungen gefunden.</p>
+                <?php endif; ?>
+                <input type="submit" class="btn btn-primary" value="Refresh" id="submitorder"><br><br>
+
+            </form>
+        </div>
+        <script src="../js/order.js"></script>
         <div class="row registrationrow">
+            <h1>Meine Daten</h1>
             <div class="col-md-2"></div>
             <div class="col-8 form">
                 <form action="../../backend/logic/myaccount.php" method="post">
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <label for="anrede">Anrede:</label>          
@@ -117,7 +158,7 @@ require_once("../../backend/logic/myaccountfunction.php");
                     </div>
 
                     <label for="zahlungsinformationen">Zahlungsmethode:</label>
-                        <select name="zahlungsinformationen" id="zahlungsinformationen" class="form-control" required>
+                        <select name="zahlungsinformationen" id="zahlungsinformationen" class="form-control">
                             <option value="">Bitte wählen</option>
                             <option value="Kreditkarte">Kreditkarte</option>
                             <option value="PayPal">PayPal</option>
