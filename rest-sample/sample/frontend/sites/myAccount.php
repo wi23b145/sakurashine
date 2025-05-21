@@ -3,77 +3,148 @@ require_once("../../backend/logic/myaccountfunction.php");
 
 ?>
 <!DOCTYPE html>
-<html lang="de">
-<head>
-    <?php include("../includes/header.php"); ?>
+<html lang="en">
+  <head>
+    <?php include("../includes/header.php");?>
     <script src="../js/myAccount.js"></script>
-    <title>Mein Konto</title>
-</head>
+    <title>Daten bearbeiten</title>
+  </head>
 <body>
-<?php include("../includes/nav.php"); ?>
-<main class="container py-4">
-  <h2>Meine Kontoinformationen</h2>
+    <?php include("../includes/nav.php");?>
+<main>
+    <div class="container">
+        <div class="row registrationrow">
+            <div class="col-md-2"></div>
+            <div class="col-8 form">
+                <form action="../../backend/logic/myaccount.php" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="anrede">Anrede:</label>          
 
-  <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
-  <?php endif; ?>
-  <?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-  <?php endif; ?>
+                            <select id="anrede" class="form-control" name="anrede" required>
+                                <option value="" <?php if ($_SESSION['user']['anrede'] == '') echo 'selected'; ?>></option>
+                                <option value="Frau" <?php if ($_SESSION['user']['anrede'] == 'Frau') echo 'selected'; ?>>Frau</option>
+                                <option value="Herr" <?php if ($_SESSION['user']['anrede'] == 'Herr') echo 'selected'; ?>>Herr</option>
+                                <option value="Divers" <?php if ($_SESSION['user']['anrede'] == 'Divers') echo 'selected'; ?>>Divers</option>
+                            </select>
 
-  <form action="../../backend/logic/myaccount.php" method="post">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-3">
+                            <label for="vorname">Vorname:</label>
 
-    <!-- Dynamische Felder -->
-    <?php foreach (['vorname', 'nachname', 'email', 'adresse', 'plz', 'ort', 'benutzername'] as $feld): ?>
-      <div class="form-group mb-3">
-        <label for="<?= $feld ?>"><?= ucfirst($feld) ?>:</label>
-        <div id="<?= $feld ?>_display">
-          <span><?= $feld === 'email'
-              ? preg_replace('/(?<=.).(?=[^@]*?@)/', '*', safe($feld))
-              : maskiere(safe($feld)) ?></span>
-          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('<?= $feld ?>')">Bearbeiten</button>
+                            <!-- Maskierte Anzeige -->
+                            <div id="vorname_display">
+                                <span><?= maskiere($_SESSION['user']['vorname']) ?></span>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('vorname')">Bearbeiten</button>
+                            </div>
+
+                            <!-- Verstecktes Eingabefeld mit Originalwert -->
+                            <input type="text"
+                                    name="vorname"
+                                    id="vorname"
+                                    class="form-control d-none"
+                                    value="<?= htmlspecialchars($_SESSION['user']['vorname']) ?>">
+                    	</div>
+                        <div class="form-group mb-3">
+                        <label for="nachname">Nachname:</label>
+                        <div id="nachname_display">
+                            <span><?= maskiere($_SESSION['user']['nachname']) ?></span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('nachname')">Bearbeiten</button>
+                        </div>
+                        <input type="text"
+                                name="nachname"
+                                id="nachname"
+                                class="form-control d-none"
+                                value="<?= htmlspecialchars($_SESSION['user']['nachname']) ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="email">E-Mail:</label>
+                        <div id="email_display">
+                            <span><?= preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $_SESSION['user']['email']) ?></span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('email')">Bearbeiten</button>
+                        </div>
+                        <input type="email"
+                                name="email"
+                                id="email"
+                                class="form-control d-none"
+                                value="<?= htmlspecialchars($_SESSION['user']['email']) ?>">
+                     </div>
+
+                    <div class="form-group mb-3">
+                        <label for="adresse">Adresse:</label>
+                        <div id="adresse_display">
+                            <span><?= maskiere($_SESSION['user']['adresse']) ?></span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('adresse')">Bearbeiten</button>
+                        </div>
+                        <input type="text"
+                                name="adresse"
+                                id="adresse"
+                                class="form-control d-none"
+                                value="<?= htmlspecialchars($_SESSION['user']['adresse']) ?>">
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group mb-3">
+                            <label for="plz">PLZ:</label>
+                            <div id="plz_display">
+                                <span><?= maskiere($_SESSION['user']['plz']) ?></span>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('plz')">Bearbeiten</button>
+                            </div>
+                            <input type="text"
+                                    name="plz"
+                                    id="plz"
+                                    class="form-control d-none"
+                                    value="<?= htmlspecialchars($_SESSION['user']['plz']) ?>">
+                        </div>
+
+                       <div class="form-group mb-3">
+                            <label for="ort">Ort:</label>
+                            <div id="ort_display">
+                                <span><?= maskiere($_SESSION['user']['ort']) ?></span>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('ort')">Bearbeiten</button>
+                            </div>
+                            <input type="text"
+                                    name="ort"
+                                    id="ort"
+                                    class="form-control d-none"
+                                    value="<?= htmlspecialchars($_SESSION['user']['ort']) ?>">
+                        </div>
+
+                    </div>
+                            
+                    <div class="form-group mb-3">
+                        <label for="benutzername">Benutzername:</label>
+                        <div id="benutzername_display">
+                            <span><?= maskiere($_SESSION['user']['benutzername']) ?></span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="bearbeiten('benutzername')">Bearbeiten</button>
+                        </div>
+                        <input type="text"
+                                name="benutzername"
+                                id="benutzername"
+                                class="form-control d-none"
+                                value="<?= htmlspecialchars($_SESSION['user']['benutzername']) ?>">
+                    </div>
+
+                    <label for="oldpassword">Aktuelles Passwort (Pflicht):</label>
+                    <input type="password" name="oldpassword" class="form-control" placeholder="Aktuelles Passwort" required>
+                    
+                    <label for="password">Neues Passwort (Optional):</label>
+                    <input  type="password" id="password" class="form-control" name="passwort" placeholder="Neues Passwort (optional)">
+                            
+                    <label for="wpassword">Wiederholen Sie das Passwort:</label>
+                    <input  type="password" id="wpassword" class="form-control" name="wpassword" placeholder="Wiederholen">
+
+                    <input type="submit" class="btn btn-primary" value="Submit" id="submit">
+                    <input type="reset" class="btn btn-primary" value="Reset" id="reset">
+                </form>
+            </div>
+            <div class="col-md-2"></div>
         </div>
-        <input type="<?= $feld === 'email' ? 'email' : 'text' ?>" name="<?= $feld ?>" id="<?= $feld ?>"
-               value="<?= safe($feld) ?>" class="form-control d-none">
-      </div>
-    <?php endforeach; ?>
-
-    <!-- Anrede -->
-    <div class="form-group mb-3">
-      <label for="anrede">Anrede:</label>
-      <select name="anrede" id="anrede" class="form-control">
-        <?php foreach (['', 'Frau', 'Herr', 'Divers'] as $a): ?>
-          <option value="<?= $a ?>" <?= safe('anrede') === $a ? 'selected' : '' ?>><?= $a ?></option>
-        <?php endforeach; ?>
-      </select>
     </div>
-
-    <!-- Neue Zahlungsmethode -->
-    <div class="form-group mb-3">
-      <label for="zahlung">Neue Zahlungsmethode (optional):</label>
-      <select name="zahlung" id="zahlung" class="form-control">
-        <option value="">Keine hinzufügen</option>
-        <option value="Kreditkarte">Kreditkarte</option>
-        <option value="PayPal">PayPal</option>
-        <option value="Rechnung">Rechnung</option>
-      </select>
-    </div>
-
-    <!-- Passwort -->
-    <div class="form-group mb-3">
-      <label for="oldpassword">Aktuelles Passwort (Pflicht):</label>
-      <input type="password" name="oldpassword" class="form-control" required>
-
-      <label for="passwort">Neues Passwort (optional):</label>
-      <input type="password" name="passwort" class="form-control">
-
-      <label for="wpassword">Neues Passwort wiederholen:</label>
-      <input type="password" name="wpassword" class="form-control">
-    </div>
-
-    <button type="submit" class="btn btn-primary">Änderungen speichern</button>
-    <button type="reset" class="btn btn-secondary">Zurücksetzen</button>
-  </form>
 </main>
 <div class="footer">
     <p>@2025 SakuraShine</p>

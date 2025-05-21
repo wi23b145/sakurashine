@@ -6,7 +6,14 @@ function safe($key) {
 }
 
 function maskiere($text) {
-    if (!$text || strlen($text) < 2) return '*';
-    return substr($text, 0, 1) . str_repeat('*', max(1, strlen($text) - 1));
+  $len = strlen($text);
+  if ($len <= 2) return str_repeat('*', $len);
+  return $text[0] . str_repeat('*', $len - 2) . $text[$len - 1];
 }
+
+function isMasked($wert) {
+    return str_contains($wert, '*');
+}
+
+
 ?>

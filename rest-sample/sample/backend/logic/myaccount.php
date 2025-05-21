@@ -1,17 +1,16 @@
 <?php
-session_start();
-require_once "../config/dbaccess.php";
+require_once "../config/dbaccess.php"; // enthält $con
 
-// Nur eingeloggte Benutzer
+// Nur eingeloggte Benutzer zulassen
 if (!isset($_SESSION['user'])) {
     header("Location: ../../frontend/sites/login.php");
     exit;
 }
 
 $user_id = $_SESSION['user']['id'];
-
-// Aktuelles Passwort prüfen
 $oldpassword = $_POST['oldpassword'] ?? '';
+
+// Passwortprüfung
 $stmt = $con->prepare("SELECT passwort FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -24,17 +23,37 @@ if (!$user || !password_verify($oldpassword, $user['passwort'])) {
     exit;
 }
 
-// Neue Daten abholen
-$felder = ['anrede', 'vorname', 'nachname', 'email', 'adresse', 'plz', 'ort', 'benutzername'];
+// Felder definieren, die geprüft werden sollen
+$felder = [
+    'anrede', 'vorname', 'nachname', 'email',
+    'adresse', 'plz', 'ort', 'benutzername'
+];
+
 $updates = [];
 $params = [];
 $types = "";
 
-// Felder vergleichen
+// Nur geänderte und gültige Werte übernehmen
 foreach ($felder as $feld) {
+    $neu = trim($_POST[$feld] ?? '');
     $alt = $_SESSION['user'][$feld] ?? '';
-    $neu = $_POST[$feld] ?? '';
-    if ($alt !== $neu) {
+
+    if ($neu !== '' && $neu !== $alt) {
+
+        // Benutzername auf Duplikat prüfen
+        if ($feld === 'benutzername') {
+            $check = $con->prepare("SELECT id FROM users WHERE benutzername = ? AND id != ?");
+            $check->bind_param("si", $neu, $user_id);
+            $check->execute();
+            $check->store_result();
+            if ($check->num_rows > 0) {
+                $_SESSION['error'] = "Benutzername bereits vergeben.";
+                header("Location: ../../frontend/sites/myAccount.php");
+                exit;
+            }
+            $check->close();
+        }
+
         $updates[] = "$feld = ?";
         $params[] = $neu;
         $types .= "s";
@@ -43,56 +62,41 @@ foreach ($felder as $feld) {
 }
 
 // Passwort optional ändern
-$neues_passwort = $_POST['passwort'] ?? '';
+$passwort = $_POST['passwort'] ?? '';
 $wpasswort = $_POST['wpassword'] ?? '';
 
-if (!empty($neues_passwort) || !empty($wpasswort)) {
-    if ($neues_passwort !== $wpasswort) {
-        $_SESSION['error'] = "Neue Passwörter stimmen nicht überein.";
+if (!empty($passwort) || !empty($wpasswort)) {
+    if ($passwort !== $wpasswort) {
+        $_SESSION['error'] = "Die neuen Passwörter stimmen nicht überein.";
         header("Location: ../../frontend/sites/myAccount.php");
         exit;
     }
 
-    $hash = password_hash($neues_passwort, PASSWORD_DEFAULT);
+    $hash = password_hash($passwort, PASSWORD_DEFAULT);
     $updates[] = "passwort = ?";
     $params[] = $hash;
     $types .= "s";
 }
 
-// Wenn es Änderungen gibt → Update
+// Daten speichern, falls nötig
+
 if (!empty($updates)) {
-    $updates_sql = implode(", ", $updates);
+    $sql = "UPDATE users SET " . implode(", ", $updates) . " WHERE id = ?";
     $params[] = $user_id;
     $types .= "i";
 
-    $stmt = $con->prepare("UPDATE users SET $updates_sql WHERE id = ?");
+    $stmt = $con->prepare($sql);
     $stmt->bind_param($types, ...$params);
 
-    if (!$stmt->execute()) {
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Daten erfolgreich aktualisiert.";
+    } else {
         $_SESSION['error'] = "Fehler beim Speichern: " . $stmt->error;
-        header("Location: ../../frontend/sites/myAccount.php");
-        exit;
     }
+} else {
+    $_SESSION['success'] = "Keine Änderungen vorgenommen.";
 }
 
-// Neue Zahlungsmethode hinzufügen, falls ausgewählt
-$zahlung = trim($_POST['zahlung'] ?? '');
-if (!empty($zahlung)) {
-    $check = $con->prepare("SELECT id FROM zahlungsinformationen WHERE user_id = ? AND methode = ?");
-    $check->bind_param("is", $user_id, $zahlung);
-    $check->execute();
-    $check->store_result();
-
-    if ($check->num_rows == 0) {
-        $insert = $con->prepare("INSERT INTO zahlungsinformationen (user_id, methode) VALUES (?, ?)");
-        $insert->bind_param("is", $user_id, $zahlung);
-        $insert->execute();
-        $insert->close();
-    }
-    $check->close();
-}
-
-$_SESSION['success'] = "Daten erfolgreich gespeichert.";
 header("Location: ../../frontend/sites/myAccount.php");
 exit;
 ?>
