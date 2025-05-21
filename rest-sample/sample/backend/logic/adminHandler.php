@@ -1,5 +1,4 @@
 <?php
-<?php
 // backend/logic/adminHandler.php
 // JSON-API für Admin: Kunden & Bestellungen
 
@@ -88,3 +87,4 @@ switch ($action) {
         echo json_encode(['error' => 'Ungültige Aktion']);
         break;
 }
+?>
