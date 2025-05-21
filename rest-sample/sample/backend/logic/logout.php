@@ -5,7 +5,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // 2) Session starten
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // 3) DB-Konfiguration einbinden
 require_once __DIR__ . '/../config/dbaccess.php';

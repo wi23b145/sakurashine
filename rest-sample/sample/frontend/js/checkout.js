@@ -23,40 +23,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 2) Formular abschicken abfangen
   form.addEventListener('submit', async e => {
-    e.preventDefault();
-    let sumFinal = sumOriginal;
-    const code   = form.gutschein.value.trim().toUpperCase();
+  e.preventDefault();
+  let sumFinal = sumOriginal;
+  const code = form.gutschein.value.trim().toUpperCase();
 
-    if (code !== '') {
-      try {
-        const resp    = await fetch(
-          `../../backend/logic/voucherHandler.php?code=${encodeURIComponent(code)}`
-        );
-        const voucher = await resp.json();
-        if (!resp.ok) throw new Error(voucher.error || `HTTP ${resp.status}`);
+  if (code !== '') {
+    try {
+      const resp = await fetch(`../../backend/logic/voucherHandler.php?code=${encodeURIComponent(code)}`);
+      const voucher = await resp.json();
+      if (!resp.ok) throw new Error(voucher.error || `HTTP ${resp.status}`);
 
-        if (voucher.typ === 'percent') {
-          sumFinal = sumOriginal * (1 - voucher.rabatt_prozent / 100);
-        } else {
-          sumFinal = sumOriginal - voucher.geldwert;
-        }
-        if (sumFinal < 0) sumFinal = 0;
-      } catch (err) {
-        alert('Fehler beim Einlösen des Gutscheins:\n' + err.message);
-        return;
+      if (voucher.typ === 'percent') {
+        sumFinal = sumOriginal * (1 - voucher.rabatt_prozent / 100);
+      } else {
+        sumFinal = sumOriginal - voucher.geldwert;
       }
+      if (sumFinal < 0) sumFinal = 0;
+    } catch (err) {
+      alert('Fehler beim Einlösen des Gutscheins:\n' + err.message);
+      return;
+    }
+  }
+
+  // Bestellung an Backend senden
+  const bestellung = {
+    name: form.name.value.trim(),
+    address: form.adress.value.trim(),
+    plz: form.plz.value.trim(),
+    ort: form.ort.value.trim(),
+    zahlungsmethode: form.zahlungsmethode.value,
+    gutschein: code,
+    warenkorb: warenkorb
+  };
+
+  try {
+    const response = await fetch('../../backend/logic/submit_order.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bestellung),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Bestellung fehlgeschlagen');
     }
 
-    // 3) Nur zum Test: Alert mit Beträgen
-    alert(
-      `Bestellung bestätigt!\n` +
-      `Ursprungs-Summe: €${sumOriginal.toFixed(2)}\n` +
-      `Endbetrag:       €${sumFinal.toFixed(2)}` +
-      (code ? `\nGutschein: ${code}` : '')
-    );
+    alert(`Bestellung erfolgreich! Bestell-ID: ${result.bestellung_id}`);
 
-    // 4) Aufräumen / Weiterleitung
     localStorage.removeItem('warenkorb');
     window.location.href = '../index.php';
-  });
+
+  } catch (error) {
+    alert('Fehler bei der Bestellung:\n' + error.message);
+  }
+});
 });
