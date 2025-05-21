@@ -1,7 +1,11 @@
 <?php
+<<<<<<< HEAD
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+=======
+session_start();
+>>>>>>> 342c54d66036d2092c6f831a5ead80ecbc768cdc
 require_once "../config/dbaccess.php"; // enthält $con
 
 $oldpassword = $_POST['oldpassword'];

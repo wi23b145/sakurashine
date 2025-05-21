@@ -44,14 +44,22 @@
                   aria-expanded="false">
             <?= htmlspecialchars($_SESSION['user']['vorname']) ?>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end" 
-              aria-labelledby="dropdownMenuButton">
-            <li>
-              <a class="dropdown-item" 
-                 href="/sakurashine/rest-sample/sample/backend/logic/logout.php">
-                SIGN OUT
-              </a>
-            </li>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <?php 
+                if(isset($_SESSION['user'])) {
+                    $vorname = htmlspecialchars($_SESSION['user']['vorname']);
+                    echo "<li><a class='dropdown-item'>Willkommen $vorname</a></li>";
+
+                } 
+            ?>
+
+            <li><a class="dropdown-item" href="../sites/cart.php">CART</a></li>
+            <?php 
+              if (isset($_SESSION['user'])) {
+                  echo "<li><a class='dropdown-item' href='/sakurashine/rest-sample/sample/backend/logic/logout.php'>SIGN OUT</a></li>";
+              }
+            ?>
+            
           </ul>
         </div>
       </li>
