@@ -87,9 +87,13 @@ label{
 }
 
 .product-img {
-    height: 200px;
-    object-fit: cover;
-}
+    width: 200px;           /* feste Breite */
+    height: 200px;          /* feste Höhe */
+    object-fit: contain;    /* Bild bleibt komplett sichtbar, wird skaliert */
+    display: block;         /* entfernt Inline-Abstände */
+    margin: 0 auto;         /* horizontal zentrieren */
+  }
+
 
 
 h1{

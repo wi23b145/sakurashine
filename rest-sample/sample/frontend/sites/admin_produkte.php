@@ -1,9 +1,8 @@
 <?php
 
-
-
-
 require_once __DIR__ . '/../../backend/config/dbaccess.php';
+session_start();
+
 if (empty($_SESSION['user']) || $_SESSION['user']['ist_admin'] != 1) {
     header('Location: ../sites/login.html');
     exit();
@@ -140,16 +139,8 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-   <head>
-        <?php include("../includes/header.php");?>
-        <title>Kunden verwalten</title>
-    </head>
-    
-<body>
-    <?php include("../includes/nav.php");?>
-    
-    <div class="container mt-5">
-    
+  <?php include("../includes/header.php");?>
+  <title>Produkte verwalten</title>
   <style>
     body { font-family: Arial; padding:20px; }
     .errors { color:red; }
@@ -160,104 +151,104 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
   </style>
 </head>
 <body>
-  <h1>Produkte verwalten</h1>
+  <?php include("../includes/nav.php");?>
+  
+  <div class="container mt-5">
+    <h1>Produkte verwalten</h1>
 
-  <?php if ($errors): ?>
-    <div class="errors">
-      <ul>
-      <?php foreach ($errors as $e): ?>
-        <li><?= htmlspecialchars($e) ?></li>
-      <?php endforeach ?>
-      </ul>
-    </div>
-  <?php endif ?>
-
-  <form method="post" enctype="multipart/form-data">
-    <?php if ($isEdit): ?>
-      <input type="hidden" name="id" value="<?= $product['id'] ?>">
-    <?php endif ?>
-
-    <div>
-      <label>Name<br>
-        <input type="text" name="name"
-               value="<?= htmlspecialchars($product['name']) ?>"
-               maxlength="100">
-      </label>
-    </div>
-    <div>
-      <label>Beschreibung<br>
-        <textarea name="beschreibung"
-                  rows="4"><?= htmlspecialchars($product['beschreibung']) ?></textarea>
-      </label>
-    </div>
-    <div>
-      <label>Preis<br>
-        <input type="number" name="preis" step="0.01"
-               value="<?= htmlspecialchars($product['preis']) ?>">
-      </label>
-    </div>
-    <div>
-      <label>Bestand<br>
-        <input type="number" name="bestand"
-               value="<?= htmlspecialchars($product['bestand']) ?>">
-      </label>
-    </div>
-   
-    <div>
-      <label>Bild <?= $isEdit ? '(optional)' : '(Pflicht)' ?><br>
-        <input type="file" name="bild" accept=".jpg,.jpeg,.png">
-      </label>
-    </div>
-    <?php if ($isEdit && $product['bild']): ?>
-      <div>
-        <strong>Aktuelles Bild:</strong><br>
-        <img src="../<?= htmlspecialchars($product['bild']) ?>"
-             class="thumb" alt="">
+    <?php if ($errors): ?>
+      <div class="errors">
+        <ul>
+        <?php foreach ($errors as $e): ?>
+          <li><?= htmlspecialchars($e) ?></li>
+        <?php endforeach ?>
+        </ul>
       </div>
     <?php endif ?>
-    <div>
-      <button type="submit"><?= $isEdit ? 'Speichern' : 'Anlegen' ?></button>
+
+    <form method="post" enctype="multipart/form-data">
       <?php if ($isEdit): ?>
-        <a href="admin_produkte.php">Abbrechen</a>
+        <input type="hidden" name="id" value="<?= $product['id'] ?>">
       <?php endif ?>
-    </div>
-  </form>
 
-  <hr>
+      <div>
+        <label>Name<br>
+          <input type="text" name="name"
+                 value="<?= htmlspecialchars($product['name']) ?>"
+                 maxlength="100">
+        </label>
+      </div>
+      <div>
+        <label>Beschreibung<br>
+          <textarea name="beschreibung"
+                    rows="4"><?= htmlspecialchars($product['beschreibung']) ?></textarea>
+        </label>
+      </div>
+      <div>
+        <label>Preis<br>
+          <input type="number" name="preis" step="0.01"
+                 value="<?= htmlspecialchars($product['preis']) ?>">
+        </label>
+      </div>
+      <div>
+        <label>Bestand<br>
+          <input type="number" name="bestand"
+                 value="<?= htmlspecialchars($product['bestand']) ?>">
+        </label>
+      </div>
+     
+      <div>
+        <label>Bild <?= $isEdit ? '(optional)' : '(Pflicht)' ?><br>
+          <input type="file" name="bild" accept=".jpg,.jpeg,.png">
+        </label>
+      </div>
+      <?php if ($isEdit && $product['bild']): ?>
+        <div>
+          <strong>Aktuelles Bild:</strong><br>
+          <img src="../<?= htmlspecialchars($product['bild']) ?>" class="thumb" alt="">
+        </div>
+      <?php endif ?>
+      <div>
+        <button type="submit"><?= $isEdit ? 'Speichern' : 'Anlegen' ?></button>
+        <?php if ($isEdit): ?>
+          <a href="admin_produkte.php">Abbrechen</a>
+        <?php endif ?>
+      </div>
+    </form>
 
-  <h2>Bestehende Produkte</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Bild</th>
-        <th>Name</th>
-        <th>Preis</th>
-        <th>Bestand</th>
-    
-        <th>Aktionen</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php while ($row = $result->fetch_assoc()): ?>
-      <tr>
-        <td>
-          <?php if ($row['bild']): ?>
-            <img src="../<?= htmlspecialchars($row['bild']) ?>"
-                 class="thumb" alt="">
-          <?php endif ?>
-        </td>
-        <td><?= htmlspecialchars($row['name']) ?></td>
-        <td>€ <?= number_format($row['preis'],2,',','.') ?></td>
-        <td><?= (int)$row['bestand'] ?></td>
-        
-        <td>
-          <a href="?edit=<?= $row['id'] ?>">Bearbeiten</a> |
-          <a href="?delete=<?= $row['id'] ?>"
-             onclick="return confirm('Wirklich löschen?');">Löschen</a>
-        </td>
-      </tr>
-      <?php endwhile ?>
-    </tbody>
-  </table>
+    <hr>
+
+    <h2>Bestehende Produkte</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Bild</th>
+          <th>Name</th>
+          <th>Preis</th>
+          <th>Bestand</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($row = $result->fetch_assoc()): ?>
+        <tr>
+          <td>
+            <?php if ($row['bild']): ?>
+              <img src="../<?= htmlspecialchars($row['bild']) ?>" class="thumb" alt="">
+            <?php endif ?>
+          </td>
+          <td><?= htmlspecialchars($row['name']) ?></td>
+          <td>€ <?= number_format($row['preis'],2,',','.') ?></td>
+          <td><?= (int)$row['bestand'] ?></td>
+          <td>
+            <a href="?edit=<?= $row['id'] ?>">Bearbeiten</a> |
+            <a href="?delete=<?= $row['id'] ?>"
+               onclick="return confirm('Wirklich löschen?');">Löschen</a>
+          </td>
+        </tr>
+        <?php endwhile ?>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
