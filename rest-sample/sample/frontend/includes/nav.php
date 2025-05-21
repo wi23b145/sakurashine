@@ -1,4 +1,6 @@
-<?php session_start(); ?>
+<?php if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+} ?>
 <nav class="navbar">
   <ul class="nav">
     <li class="nav-item">

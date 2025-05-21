@@ -170,3 +170,23 @@ tbody, td, tfoot, th, thead, tr {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+
+.errors { 
+    color:red; 
+}
+    
+.productstable { 
+    width:100%; 
+    border-collapse:collapse; 
+    margin-top:20px; 
+}
+    
+.productstable th, td {
+    border:1px solid #ccc; 
+    padding:8px; }
+    
+.img.thumb { 
+    max-width:80px; 
+}
+    
