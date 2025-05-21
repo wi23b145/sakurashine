@@ -1,6 +1,5 @@
 <?php
 // frontend/sites/produkte.php
-session_start();
 require_once __DIR__ . '/../../backend/config/dbaccess.php';
 
 // Produkte inkl. Kategorie aus DB holen
