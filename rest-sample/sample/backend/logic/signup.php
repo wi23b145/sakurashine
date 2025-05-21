@@ -1,6 +1,8 @@
 <?php
 require_once ('../config/dbaccess.php'); // Sicherstellen, dass dbaccess.php die DB-Verbindung enthält
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Überprüfen, ob die Anfrage eine POST-Anfrage ist
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

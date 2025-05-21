@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
 // Wenn Session-Warenkorb nicht gesetzt, versuchen aus DB zu laden (falls eingeloggt)

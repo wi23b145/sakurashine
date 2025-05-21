@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../config/dbaccess.php'; // enthält $con
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
