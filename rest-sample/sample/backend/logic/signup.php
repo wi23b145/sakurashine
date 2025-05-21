@@ -15,6 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adresse = $con->real_escape_string($_POST['adresse']);
     $plz = $con->real_escape_string($_POST['plz']);
     $ort = $con->real_escape_string($_POST['ort']);
+    $zahlung = $con->real_escape_string($_POST['zahlung']);
     $passwort = $con->real_escape_string($_POST['passwort']);
     $wpassword = $con->real_escape_string($_POST['wpassword']);
 
@@ -41,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashed_password = password_hash($passwort, PASSWORD_BCRYPT);
 
     // SQL-Query zum Einfügen des neuen Nutzers
-    $sql = "INSERT INTO users (anrede, vorname, nachname, email, benutzername, passwort, adresse, plz, ort) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (anrede, vorname, nachname, email, benutzername, passwort, adresse, plz, ort, zahlungsinformationen)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Ausführen der Abfrage
     if ($stmt = $con->prepare($sql)) {
@@ -50,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Setze Standardwerte oder sorge für die korrekte Zuweisung
         $user = 2; // Beispiel: Standard-Rolle für den Benutzer
         $status = 1; // Beispiel: Standard-Status für den Benutzer
-        $stmt->bind_param("sssssssss", $anrede, $firstname, $lastname, $email, $username, $hashed_password, $adresse, $plz, $ort);
+        $stmt->bind_param("ssssssssss", $anrede, $firstname, $lastname, $email, $username, $hashed_password, $adresse, $plz, $ort, $zahlung);
         $stmt->execute();
 
         // Erfolgreiche Registrierung

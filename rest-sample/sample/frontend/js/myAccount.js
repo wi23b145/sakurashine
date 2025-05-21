@@ -8,7 +8,14 @@ function bearbeiten(feld) {
   }
 }
 
-// Sicherheit: Eingabefelder, die d-none sind, beim Absenden deaktivieren
+// Wenn Benutzer in ein Eingabefeld tippt, markiere es als "bearbeitet"
+document.querySelectorAll("input").forEach(input => {
+  input.addEventListener("input", () => {
+    input.classList.add("was-edited");
+  });
+});
+
+// Sicherheit: Eingabefelder, die d-none sind und nicht bearbeitet wurden, beim Absenden deaktivieren
 document.querySelector("form").addEventListener("submit", function () {
   document.querySelectorAll("input.d-none").forEach(i => {
     if (!i.classList.contains("was-edited")) {
@@ -16,4 +23,3 @@ document.querySelector("form").addEventListener("submit", function () {
     }
   });
 });
-

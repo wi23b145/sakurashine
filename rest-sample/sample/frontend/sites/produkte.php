@@ -1,9 +1,16 @@
 <?php
-// frontend/sites/produkte.php
 session_start();
+
+
+// DB-Verbindung einbinden (stelle sicher, dass $con in dbaccess.php definiert ist)
 require_once __DIR__ . '/../../backend/config/dbaccess.php';
 
-// Produkte inkl. Kategorie aus DB holen
+// Prüfen, ob DB-Verbindung funktioniert
+if (!$con) {
+    die("Fehler bei der DB-Verbindung: " . mysqli_connect_error());
+}
+
+// SQL-Abfrage definieren
 $sql = "
   SELECT 
     p.id,
@@ -16,7 +23,14 @@ $sql = "
   JOIN categories c ON p.category_id = c.id
   ORDER BY p.erstellt_am DESC
 ";
+
+// SQL-Abfrage ausführen
 $result = $con->query($sql);
+
+// Prüfen ob Abfrage erfolgreich war
+if (!$result) {
+    die("Fehler in der SQL-Abfrage: " . $con->error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -63,7 +77,7 @@ $result = $con->query($sql);
     <!-- Produkt-Grid -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <?php while ($row = $result->fetch_assoc()):
-        // Kategorienamen in slug umwandeln
+        // Kategorienamen in slug umwandeln für Filterzwecke (z.B. "Getränke" => "getraenke")
         $slug = strtolower(str_replace(
           [' ', 'ä','ö','ü','ß'],
           ['-','ae','oe','ue','ss'],

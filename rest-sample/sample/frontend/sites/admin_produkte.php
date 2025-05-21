@@ -8,10 +8,18 @@ if (empty($_SESSION['user']) || $_SESSION['user']['ist_admin'] != 1) {
     exit();
 }
 
-// 3) Array für Fehlermeldungen
 $errors = [];
 
-// 4) Löschen eines Produkts
+// Kategorien laden
+$categories = [];
+$res = $con->query("SELECT id, name FROM categories ORDER BY name");
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $categories[] = $row;
+    }
+}
+
+// Produkt löschen
 if (isset($_GET['delete'])) {
     $delId = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
     if ($delId) {
@@ -24,7 +32,7 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-// 5) Vorbefüllen im Bearbeitungsmodus
+// Bearbeitungsmodus
 $isEdit  = false;
 $product = [
     'id'            => null,
@@ -32,8 +40,8 @@ $product = [
     'beschreibung'  => '',
     'preis'         => '',
     'bestand'       => 0,
-    'bewertung'     => 0,
     'bild'          => '',
+    'category_id'   => null,
 ];
 if (isset($_GET['edit'])) {
     $eid    = filter_input(INPUT_GET, 'edit', FILTER_VALIDATE_INT);
@@ -50,7 +58,7 @@ if (isset($_GET['edit'])) {
     }
 }
 
-// 6) Anlegen / Speichern
+// Speichern/Anlegen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isEdit       = !empty($_POST['id']);
     $id           = $isEdit ? intval($_POST['id']) : null;
@@ -58,10 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $beschreibung = trim($_POST['beschreibung']);
     $preis        = filter_input(INPUT_POST, 'preis', FILTER_VALIDATE_FLOAT);
     $bestand      = filter_input(INPUT_POST, 'bestand', FILTER_VALIDATE_INT);
-    $bewertung    = filter_input(INPUT_POST, 'bewertung', FILTER_VALIDATE_FLOAT);
+    $category_id  = filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT);
     $bildPfad     = $product['bild'];
 
-    // --- Validierung ---
+    // Validierung
     if ($name === '' || mb_strlen($name) > 100) {
         $errors[] = 'Name darf nicht leer sein und max. 100 Zeichen haben.';
     }
@@ -74,11 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($bestand === false || $bestand < 0) {
         $errors[] = 'Bestand muss ≥ 0 sein.';
     }
-    if ($bewertung === false || $bewertung < 0 || $bewertung > 5) {
-        $errors[] = 'Bewertung muss zwischen 0 und 5 liegen.';
+    if ($category_id === false || $category_id === null) {
+        $errors[] = 'Bitte eine gültige Kategorie auswählen.';
     }
 
-    // Bild-Upload nur bei Neuanlage Pflicht, im Edit optional
     if (isset($_FILES['bild']) && $_FILES['bild']['error'] === UPLOAD_ERR_OK) {
         $allowed = ['image/jpeg','image/png'];
         if (!in_array($_FILES['bild']['type'], $allowed)) {
@@ -91,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Bitte ein Bild hochladen.';
     }
 
-    // wenn valide: Bild verschieben und DB-Operation
     if (empty($errors)) {
         if (isset($_FILES['bild']) && $_FILES['bild']['error'] === UPLOAD_ERR_OK) {
             $ext      = pathinfo($_FILES['bild']['name'], PATHINFO_EXTENSION);
@@ -101,26 +107,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mkdir($uDir, 0755, true);
             }
             move_uploaded_file($_FILES['bild']['tmp_name'], "$uDir$fn");
-            $bildPfad = 'res/img/' . $fn;
+            $bildPfad = $fn;
         }
 
         if ($isEdit) {
             $sql = "UPDATE `Produkte`
-                       SET name=?, beschreibung=?, preis=?, bestand=?, bewertung=?, bild=?
+                       SET name=?, beschreibung=?, preis=?, bestand=?, bild=?, category_id=?
                      WHERE id=?";
             $stmt = $con->prepare($sql);
             $stmt->bind_param(
-                "ssdidsi",
-                $name, $beschreibung, $preis, $bestand, $bewertung, $bildPfad, $id
+                "ssdissi",
+                $name, $beschreibung, $preis, $bestand, $bildPfad, $category_id, $id
             );
         } else {
             $sql = "INSERT INTO `Produkte`
-                      (name, beschreibung, preis, bestand, bewertung, bild)
+                      (name, beschreibung, preis, bestand, bild, category_id)
                     VALUES (?,?,?,?,?,?)";
             $stmt = $con->prepare($sql);
             $stmt->bind_param(
-                "ssdids",
-                $name, $beschreibung, $preis, $bestand, $bewertung, $bildPfad
+                "ssdiss",
+                $name, $beschreibung, $preis, $bestand, $bildPfad, $category_id
             );
         }
         $stmt->execute();
@@ -131,8 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// 7) Alle Produkte laden
-$result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
+// Produkte laden
+$sql = "SELECT p.*, c.name AS kategorie_name 
+        FROM Produkte p 
+        LEFT JOIN categories c ON p.category_id = c.id 
+        ORDER BY p.erstellt_am DESC";
+$result = $con->query($sql);
 
 ?>
 <!DOCTYPE html>
@@ -185,6 +195,18 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
         </label>
       </div>
       <div>
+        <label>Kategorie<br>
+          <select name="category_id" required>
+            <option value="">Bitte wählen</option>
+            <?php foreach ($categories as $cat): ?>
+              <option value="<?= $cat['id'] ?>" <?= (isset($product['category_id']) && $product['category_id'] == $cat['id']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($cat['name']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </label>
+      </div>
+      <div>
         <label>Preis<br>
           <input type="number" name="preis" step="0.01"
                  value="<?= htmlspecialchars($product['preis']) ?>">
@@ -196,7 +218,6 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
                  value="<?= htmlspecialchars($product['bestand']) ?>">
         </label>
       </div>
-     
       <div>
         <label>Bild <?= $isEdit ? '(optional)' : '(Pflicht)' ?><br>
           <input type="file" name="bild" accept=".jpg,.jpeg,.png">
@@ -224,6 +245,7 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
         <tr>
           <th>Bild</th>
           <th>Name</th>
+          <th>Kategorie</th>
           <th>Preis</th>
           <th>Bestand</th>
           <th>Aktionen</th>
@@ -238,7 +260,8 @@ $result = $con->query("SELECT * FROM `Produkte` ORDER BY erstellt_am DESC");
             <?php endif ?>
           </td>
           <td><?= htmlspecialchars($row['name']) ?></td>
-          <td>€ <?= number_format($row['preis'],2,',','.') ?></td>
+          <td><?= htmlspecialchars($row['kategorie_name']) ?></td>
+          <td>€ <?= number_format($row['preis'], 2, ',', '.') ?></td>
           <td><?= (int)$row['bestand'] ?></td>
           <td>
             <a href="?edit=<?= $row['id'] ?>">Bearbeiten</a> |
