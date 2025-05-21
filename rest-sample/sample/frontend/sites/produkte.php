@@ -10,6 +10,23 @@
   <?php include("../includes/nav.php");?>
   <div class="container py-5">
     <h1>Alle Produkte</h1>
+    <?php if (isset($_SESSION['error'])): ?>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['error']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['success'])): ?>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['success']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <?php unset($_SESSION['success']); ?>
+      <script src="../js/message.js"></script>
+    <?php endif; ?>
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
 
       <div class="col">
