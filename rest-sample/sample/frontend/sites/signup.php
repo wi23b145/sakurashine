@@ -51,6 +51,14 @@
                             <input  type="text" id="ort" class="form-control" name="ort" style="padding-right: 0;" placeholder="Ort" required>
                         </div>
                     </div>
+                    
+                    <label for="zahlung">Zahlungsmethode:</label>
+                        <select name="zahlung" id="zahlung" class="form-control" required>
+                            <option value="">Bitte wählen</option>
+                            <option value="Kreditkarte">Kreditkarte</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Rechnung">Rechnung</option>
+                        </select>
                             
                     <label for="username">Username:</label>
                     <input  type="text" id="username" class="form-control" name="username" placeholder="Benutzername" required>

@@ -3,7 +3,7 @@
   <head>
     <?php include("../includes/header.php");?>
     <title>Login</title>
-  <head>
+  </head>
 
 <body>
     <?php include("../includes/nav.php");?>
