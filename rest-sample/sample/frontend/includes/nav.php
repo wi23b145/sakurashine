@@ -32,13 +32,16 @@
 
     <?php else: ?>
       <!-- Eingeloggter normaler User -->
-      <li class="nav-item">
-        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/cart.php">
-          CART
-        </a>
-      </li>
+      
       <li class="nav-item ms-auto">
         <div class="dropdown">
+          <li class="nav-item">
+            <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/cart.php" aria-label="Warenkorb">
+              <img src="/sakurashine/rest-sample/sample/frontend/res/img/einkaufswagen.png" alt="Warenkorb" id="cart">
+            </a>
+          </li>
+
+
           <button class="btn btn-secondary dropdown-toggle" type="button"
                   id="dropdownMenuButton" data-bs-toggle="dropdown"
                   aria-expanded="false">
