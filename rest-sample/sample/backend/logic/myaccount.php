@@ -1,7 +1,7 @@
 <?php
-require_once "../config/dbaccess.php"; // enthält $con
+session_start();
+require_once "../config/dbaccess.php";
 
-// Nur eingeloggte Benutzer zulassen
 if (!isset($_SESSION['user'])) {
     header("Location: ../../frontend/sites/login.php");
     exit;
@@ -23,24 +23,16 @@ if (!$user || !password_verify($oldpassword, $user['passwort'])) {
     exit;
 }
 
-// Felder definieren, die geprüft werden sollen
-$felder = [
-    'anrede', 'vorname', 'nachname', 'email',
-    'adresse', 'plz', 'ort', 'benutzername'
-];
-
+$felder = ['anrede', 'vorname', 'nachname', 'email', 'adresse', 'plz', 'ort', 'benutzername', 'zahlungsinformationen'];
 $updates = [];
 $params = [];
 $types = "";
 
-// Nur geänderte und gültige Werte übernehmen
 foreach ($felder as $feld) {
     $neu = trim($_POST[$feld] ?? '');
     $alt = $_SESSION['user'][$feld] ?? '';
 
     if ($neu !== '' && $neu !== $alt) {
-
-        // Benutzername auf Duplikat prüfen
         if ($feld === 'benutzername') {
             $check = $con->prepare("SELECT id FROM users WHERE benutzername = ? AND id != ?");
             $check->bind_param("si", $neu, $user_id);
@@ -53,15 +45,13 @@ foreach ($felder as $feld) {
             }
             $check->close();
         }
-
         $updates[] = "$feld = ?";
         $params[] = $neu;
         $types .= "s";
-        $_SESSION['user'][$feld] = $neu; // Session aktualisieren
+        $_SESSION['user'][$feld] = $neu;
     }
 }
 
-// Passwort optional ändern
 $passwort = $_POST['passwort'] ?? '';
 $wpasswort = $_POST['wpassword'] ?? '';
 
@@ -71,20 +61,16 @@ if (!empty($passwort) || !empty($wpasswort)) {
         header("Location: ../../frontend/sites/myAccount.php");
         exit;
     }
-
     $hash = password_hash($passwort, PASSWORD_DEFAULT);
     $updates[] = "passwort = ?";
     $params[] = $hash;
     $types .= "s";
 }
 
-// Daten speichern, falls nötig
-
 if (!empty($updates)) {
     $sql = "UPDATE users SET " . implode(", ", $updates) . " WHERE id = ?";
     $params[] = $user_id;
     $types .= "i";
-
     $stmt = $con->prepare($sql);
     $stmt->bind_param($types, ...$params);
 

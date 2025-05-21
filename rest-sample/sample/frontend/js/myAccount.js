@@ -1,4 +1,3 @@
-
 function bearbeiten(feld) {
   const displayDiv = document.getElementById(feld + "_display");
   const inputField = document.getElementById(feld);

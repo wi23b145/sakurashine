@@ -115,6 +115,15 @@ require_once("../../backend/logic/myaccountfunction.php");
                         </div>
 
                     </div>
+
+                    <label for="zahlungsinformationen">Zahlungsmethode:</label>
+                        <select name="zahlungsinformationen" id="zahlungsinformationen" class="form-control" required>
+                            <option value="">Bitte wählen</option>
+                            <option value="Kreditkarte">Kreditkarte</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Rechnung">Rechnung</option>
+                        </select>
+
                             
                     <div class="form-group mb-3">
                         <label for="benutzername">Benutzername:</label>
