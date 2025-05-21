@@ -92,7 +92,11 @@ label{
     object-fit: contain;    /* Bild bleibt komplett sichtbar, wird skaliert */
     display: block;         /* entfernt Inline-Abstände */
     margin: 0 auto;         /* horizontal zentrieren */
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
+
+
 
 
 
@@ -116,7 +120,23 @@ h1{
 .add-to-cart{
     border: none;
     padding: 10px;
+    margin-top: auto;
+    margin-bottom: 10px;
+    background-color: rgb(9, 9, 180);
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Wichtig, damit alle Karten die gleiche Höhe haben */
+}
+
+.card-body {
+  flex-grow: 1; /* Nimmt den verfügbaren Platz ein */
+  display: flex;
+  flex-direction: column;
+}
+
 
 .remove-item{
     border: none;
