@@ -1,6 +1,5 @@
 
 <?php
-session_start();
 if (empty($_SESSION['user']) || $_SESSION['user']['ist_admin'] != 1) {
     header('Location: ../sites/login.html');
     exit;

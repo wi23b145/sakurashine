@@ -157,8 +157,7 @@ tbody, td, tfoot, th, thead, tr {
     left: 0;
     bottom: 0;
     width: 100%;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    
     background-color: #264653;
     color: white;
     text-align: center;
@@ -167,6 +166,27 @@ tbody, td, tfoot, th, thead, tr {
 
 .footer p{
     margin: 0;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    
 }
+
+
+.errors { 
+    color:red; 
+}
+    
+.productstable { 
+    width:100%; 
+    border-collapse:collapse; 
+    margin-top:20px; 
+}
+    
+.productstable th, td {
+    border:1px solid #ccc; 
+    padding:8px; }
+    
+.img.thumb { 
+    max-width:80px; 
+}
+   
+
+

@@ -66,14 +66,6 @@
                     <label for="password">Passwort:</label>
                     <input  type="password" id="password" class="form-control" name="passwort" placeholder="Passwort" required>
                             
-                    <label for="zahlung">Zahlungsmethode:</label>
-                        <select name="zahlung" id="zahlung" class="form-control" required>
-                            <option value="">Bitte wählen</option>
-                            <option value="Kreditkarte">Kreditkarte</option>
-                            <option value="PayPal">PayPal</option>
-                            <option value="Rechnung">Rechnung</option>
-                        </select>
-
 
                     <label for="wpassword">Wiederholen Sie das Passwort:</label>
                     <input  type="password" id="wpassword" class="form-control" name="wpassword" placeholder="Wiederhole Passwort" required>

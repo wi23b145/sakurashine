@@ -1,63 +1,66 @@
-<<<<<<< HEAD
-// frontend/js/checkout.js
-document.addEventListener('DOMContentLoaded', () => {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const tbody = document.querySelector('#checkout-tabelle tbody');
-  let total = 0;
-
-  cart.forEach(item => {
-    const row = document.createElement('tr');
-    const lineTotal = item.preis * item.menge;
-    total += lineTotal;
-
-    row.innerHTML = `
-      <td>${item.name}</td>
-      <td>${item.menge}</td>
-      <td>€ ${item.preis.toFixed(2)}</td>
-      <td>€ ${lineTotal.toFixed(2)}</td>
-    `;
-    tbody.appendChild(row);
-  });
-
-  document.getElementById('checkout-summe').textContent =
-    `Gesamtsumme: €${total.toFixed(2)}`;
-
-  // Warenkorb JSON ins Hidden-Feld packen
-  document.getElementById('warenkorb-input').value = JSON.stringify(cart);
-
-  // Formular-Submit per AJAX
-  document.getElementById('checkout-form')
-    .addEventListener('submit', async e => {
-      e.preventDefault();
-      const form = e.target;
-      const data = new FormData(form);
-
-      try {
-        const res = await fetch('../backend/logic/submit_order.php', {
-          method: 'POST',
-          body: data
-        });
-        const text = await res.text();
-        if (!res.ok) throw new Error(text);
-        // Erfolgreiche Bestellung: Anzeigen oder weiterleiten
-        document.body.innerHTML = `<div class="container">${text}</div>`;
-        // Optional: clear cart
-        localStorage.removeItem('cart');
-      } catch (err) {
-        alert('Fehler bei der Bestellung: ' + err.message);
-      }
-    });
-});
-=======
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+<nav class="navbar">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/index.php">HOME</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/produkte.php">PRODUKTE</a>
+    </li>
+ 
+    <?php if (!isset($_SESSION['user'])): ?>
+      <!-- Gast -->
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/signup.php">SIGN UP</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/login.php">SIGN IN</a>
+      </li>
+ 
+    <?php elseif ($_SESSION['user']['ist_admin'] == 1): ?>
+      <!-- Admin -->
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/admin_dashboard.php">ADMIN DASHBOARD</a>
+      </li>
+      <li class="nav-item ms-auto">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a>
+      </li>
+ 
+    <?php else: ?>
+      <!-- Eingeloggter normaler User -->
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/myAccount.php">MEIN KONTO</a>
+      </li>
+      <li class="nav-item ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button"
+                  id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <?= htmlspecialchars($_SESSION['user']['vorname']) ?>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/frontend/sites/cart.php">CART</a></li>
+            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a></li>
+          </ul>
+        </div>
+      </li>
+    <?php endif; ?>
+  </ul>
+</nav>
+ 
+ 
 document.addEventListener("DOMContentLoaded", function () {
   fetch("../../backend/logic/userHandler.php?action=session")
     .then(response => response.json())
     .then(user => {
         console.log(user);  // Debugging-Ausgabe in der Konsole
-
+ 
         const menu = document.getElementById("dropdown-menu");
         menu.innerHTML = "";
-
+ 
         if (user.error) {
           // Nicht eingeloggt: Login/Register anzeigen
           menu.innerHTML = `
@@ -92,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Fehler beim Laden des Benutzerstatus:", error);
     });
   });
-
-
->>>>>>> 342c54d66036d2092c6f831a5ead80ecbc768cdc
+ 
+ 
+ 
+ 

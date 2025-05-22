@@ -1,15 +1,14 @@
 <?php
-
+ 
 require_once __DIR__ . '/../../backend/config/dbaccess.php';
-session_start();
-
+ 
 if (empty($_SESSION['user']) || $_SESSION['user']['ist_admin'] != 1) {
     header('Location: ../sites/login.html');
     exit();
 }
-
+ 
 $errors = [];
-
+ 
 // Kategorien laden
 $categories = [];
 $res = $con->query("SELECT id, name FROM categories ORDER BY name");
@@ -18,7 +17,7 @@ if ($res) {
         $categories[] = $row;
     }
 }
-
+ 
 // Produkt löschen
 if (isset($_GET['delete'])) {
     $delId = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
@@ -31,7 +30,7 @@ if (isset($_GET['delete'])) {
     header('Location: admin_produkte.php');
     exit();
 }
-
+ 
 // Bearbeitungsmodus
 $isEdit  = false;
 $product = [
@@ -57,7 +56,7 @@ if (isset($_GET['edit'])) {
         $stmt->close();
     }
 }
-
+ 
 // Speichern/Anlegen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $isEdit       = !empty($_POST['id']);
@@ -68,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bestand      = filter_input(INPUT_POST, 'bestand', FILTER_VALIDATE_INT);
     $category_id  = filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT);
     $bildPfad     = $product['bild'];
-
+ 
     // Validierung
     if ($name === '' || mb_strlen($name) > 100) {
         $errors[] = 'Name darf nicht leer sein und max. 100 Zeichen haben.';
@@ -85,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($category_id === false || $category_id === null) {
         $errors[] = 'Bitte eine gültige Kategorie auswählen.';
     }
-
+ 
     if (isset($_FILES['bild']) && $_FILES['bild']['error'] === UPLOAD_ERR_OK) {
         $allowed = ['image/jpeg','image/png'];
         if (!in_array($_FILES['bild']['type'], $allowed)) {
@@ -97,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!$isEdit) {
         $errors[] = 'Bitte ein Bild hochladen.';
     }
-
+ 
     if (empty($errors)) {
         if (isset($_FILES['bild']) && $_FILES['bild']['error'] === UPLOAD_ERR_OK) {
             $ext      = pathinfo($_FILES['bild']['name'], PATHINFO_EXTENSION);
@@ -109,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             move_uploaded_file($_FILES['bild']['tmp_name'], "$uDir$fn");
             $bildPfad = $fn;
         }
-
+ 
         if ($isEdit) {
             $sql = "UPDATE `Produkte`
                        SET name=?, beschreibung=?, preis=?, bestand=?, bild=?, category_id=?
@@ -131,19 +130,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->execute();
         $stmt->close();
-
+ 
         header('Location: admin_produkte.php');
         exit();
     }
 }
-
+ 
 // Produkte laden
-$sql = "SELECT p.*, c.name AS kategorie_name 
-        FROM Produkte p 
-        LEFT JOIN categories c ON p.category_id = c.id 
+$sql = "SELECT p.*, c.name AS kategorie_name
+        FROM Produkte p
+        LEFT JOIN categories c ON p.category_id = c.id
         ORDER BY p.erstellt_am DESC";
 $result = $con->query($sql);
-
+ 
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -152,7 +151,6 @@ $result = $con->query($sql);
   <?php include("../includes/header.php");?>
   <title>Produkte verwalten</title>
   <style>
-    body { font-family: Arial; padding:20px; }
     .errors { color:red; }
     table { width:100%; border-collapse:collapse; margin-top:20px; }
     th, td { border:1px solid #ccc; padding:8px; }
@@ -165,7 +163,7 @@ $result = $con->query($sql);
   
   <div class="container mt-5">
     <h1>Produkte verwalten</h1>
-
+ 
     <?php if ($errors): ?>
       <div class="errors">
         <ul>
@@ -175,12 +173,12 @@ $result = $con->query($sql);
         </ul>
       </div>
     <?php endif ?>
-
+ 
     <form method="post" enctype="multipart/form-data">
       <?php if ($isEdit): ?>
         <input type="hidden" name="id" value="<?= $product['id'] ?>">
       <?php endif ?>
-
+ 
       <div>
         <label>Name<br>
           <input type="text" name="name"
@@ -226,7 +224,7 @@ $result = $con->query($sql);
       <?php if ($isEdit && $product['bild']): ?>
         <div>
           <strong>Aktuelles Bild:</strong><br>
-          <img src="../<?= htmlspecialchars($product['bild']) ?>" class="thumb" alt="">
+          <img src="../res/img/" alt="${p.name}" style="max-width: 80px; "?> 
         </div>
       <?php endif ?>
       <div>
@@ -236,9 +234,9 @@ $result = $con->query($sql);
         <?php endif ?>
       </div>
     </form>
-
+ 
     <hr>
-
+ 
     <h2>Bestehende Produkte</h2>
     <table>
       <thead>
@@ -256,7 +254,9 @@ $result = $con->query($sql);
         <tr>
           <td>
             <?php if ($row['bild']): ?>
-              <img src="../<?= htmlspecialchars($row['bild']) ?>" class="thumb" alt="">
+             <img src="../res/img/<?= htmlspecialchars($row['bild']) ?>"
+                 class="card-img-top product-img"
+                 alt="<?= htmlspecialchars($row['name']) ?>">
             <?php endif ?>
           </td>
           <td><?= htmlspecialchars($row['name']) ?></td>
@@ -275,3 +275,5 @@ $result = $con->query($sql);
   </div>
 </body>
 </html>
+ 
+ 

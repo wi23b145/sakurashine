@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <li class="nav-item">
       <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/produkte.php">PRODUKTE</a>
     </li>
-
+ 
     <?php if (!isset($_SESSION['user'])): ?>
       <!-- Gast -->
       <li class="nav-item">
@@ -20,7 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
       <li class="nav-item">
         <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/login.php">SIGN IN</a>
       </li>
-
+ 
     <?php elseif ($_SESSION['user']['ist_admin'] == 1): ?>
       <!-- Admin -->
       <li class="nav-item">
@@ -29,7 +29,7 @@ if (session_status() === PHP_SESSION_NONE) {
       <li class="nav-item ms-auto">
         <a class="nav-link" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a>
       </li>
-
+ 
     <?php else: ?>
       <!-- Eingeloggter normaler User -->
       <li class="nav-item">
@@ -42,7 +42,8 @@ if (session_status() === PHP_SESSION_NONE) {
             <?= htmlspecialchars($_SESSION['user']['vorname']) ?>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/frontend/sites/cart.php">CART</a></li>
+            
+
             <li><a class="dropdown-item" href="/sakurashine/rest-sample/sample/backend/logic/logout.php">SIGN OUT</a></li>
           </ul>
         </div>
@@ -50,3 +51,5 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php endif; ?>
   </ul>
 </nav>
+ 
+ 
