@@ -14,7 +14,11 @@
                 <div class="col-md-4"></div>
                 <div class="col-4 form">
                     <form action="../../backend/logic/signin.php" method="post">
+<<<<<<< HEAD
                         <label for="username">Benutzername oder E-Mail:</label>
+=======
+                        <label for="username">Username:</label>
+>>>>>>> checkoutfixed
                         <input  type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['username'] ?? ''; ?>" required>
 
                         <label for="passwort">Passwort:</label>

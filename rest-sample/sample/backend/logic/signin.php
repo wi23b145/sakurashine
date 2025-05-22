@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once '../config/dbaccess.php'; // enthält $con
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -21,9 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($user && password_verify($passwort, $user['passwort'])) {
         $_SESSION['user'] = $user;
 
+<<<<<<< HEAD
         // Login merken (Token)
         if (isset($_POST['remember'])) {
             $token = bin2hex(random_bytes(32));
+=======
+         if (isset($_POST['remember'])) {
+            $token = bin2hex(random_bytes(32)); // sicherer Zufallswert
+>>>>>>> checkoutfixed
             setcookie('login_token', $token, time() + (30 * 24 * 60 * 60), "/");
 
             $stmt = $con->prepare("UPDATE users SET login_token = ? WHERE id = ?");
@@ -31,7 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->execute();
         }
 
+<<<<<<< HEAD
         // Weiterleitung
+=======
+
+>>>>>>> checkoutfixed
         if ($user['ist_admin'] == 1) {
             header("Location: /sakurashine/rest-sample/sample/frontend/sites/admin_dashboard.php");
         } else {

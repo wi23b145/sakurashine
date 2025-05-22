@@ -5,7 +5,7 @@ body{
 .container-fluid{
     padding: 0;
     margin: 0;
-    background-image: url("../img/senbon-torii-6389421_1920.jpg"); 
+    background-image: url("../img/HomeBackground.jpg"); 
     position: absolute;
     opacity: 0.9;
     height: 100%;
@@ -87,9 +87,18 @@ label{
 }
 
 .product-img {
-    height: 200px;
-    object-fit: cover;
-}
+    width: 200px;           /* feste Breite */
+    height: 200px;          /* feste Höhe */
+    object-fit: contain;    /* Bild bleibt komplett sichtbar, wird skaliert */
+    display: block;         /* entfernt Inline-Abstände */
+    margin: 0 auto;         /* horizontal zentrieren */
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+
+
+
 
 h1{
     text-align: center;
@@ -111,7 +120,23 @@ h1{
 .add-to-cart{
     border: none;
     padding: 10px;
+    margin-top: auto;
+    margin-bottom: 10px;
+    background-color: rgb(9, 9, 180);
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Wichtig, damit alle Karten die gleiche Höhe haben */
+}
+
+.card-body {
+  flex-grow: 1; /* Nimmt den verfügbaren Platz ein */
+  display: flex;
+  flex-direction: column;
+}
+
 
 .remove-item{
     border: none;
@@ -145,3 +170,23 @@ tbody, td, tfoot, th, thead, tr {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+
+.errors { 
+    color:red; 
+}
+    
+.productstable { 
+    width:100%; 
+    border-collapse:collapse; 
+    margin-top:20px; 
+}
+    
+.productstable th, td {
+    border:1px solid #ccc; 
+    padding:8px; }
+    
+.img.thumb { 
+    max-width:80px; 
+}
+    

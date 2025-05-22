@@ -1,5 +1,11 @@
 <?php
+<<<<<<< HEAD
 session_start();
+=======
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+>>>>>>> checkoutfixed
 require_once "../config/dbaccess.php"; // enthält $con
 
 $oldpassword = $_POST['oldpassword'];

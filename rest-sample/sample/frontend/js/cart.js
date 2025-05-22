@@ -1,156 +1,87 @@
-document.addEventListener('DOMContentLoaded', function() {
+// File: frontend/js/cart.js
+// Dynamische Anzeige und Verwaltung des Warenkorbs auf der Warenkorbseite
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1) Elemente referenzieren
+  const tbody          = document.querySelector('#cart-table tbody');
+  const cartTotalElem  = document.getElementById('cart-total');
+  const checkoutBtn    = document.getElementById('checkout-btn');
+
+  // 2) Warenkorb aus localStorage laden
   const warenkorb = JSON.parse(localStorage.getItem('warenkorb') || '[]');
-  const tbody = document.querySelector('#cart-table tbody');
-  const cartTotal = document.getElementById('cart-total');
 
-
-  function aktualisiereWarenkorb() {
+  // 3) Warenkorb rendern
+  function renderCart() {
     tbody.innerHTML = '';
     let summe = 0;
 
     warenkorb.forEach((produkt, index) => {
-      const tr = document.createElement('tr');
-
       const gesamt = produkt.preis * produkt.menge;
       summe += gesamt;
 
+      const tr = document.createElement('tr');
       tr.innerHTML = `
-      <td>${produkt.name}</td>
-      <td>€${produkt.preis.toFixed(2)}</td>
-      <td class="d-flex align-items-center gap-2">
-        <button class="btn btn-sm btn-outline-secondary decrease-qty" data-index="${index}">-</button>
-        <span>${produkt.menge}</span>
-        <button class="btn btn-sm btn-outline-secondary increase-qty" data-index="${index}">+</button>
-      </td>
-      <td>€${gesamt.toFixed(2)}</td>
-      <td><button class="btn btn-sm btn-outline-danger remove-item" data-index="${index}">Entfernen</button></td>
-    `;
-
-
+        <td>${produkt.name}</td>
+        <td>${produkt.menge}</td>
+        <td>€${produkt.preis.toFixed(2)}</td>
+        <td>€${gesamt.toFixed(2)}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-secondary decrease-qty" data-index="${index}">-</button>
+          <button class="btn btn-sm btn-outline-secondary increase-qty" data-index="${index}">+</button>
+          <button class="btn btn-sm btn-outline-danger remove-item" data-index="${index}">Entfernen</button>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
-    // Entfernen-Buttons
-    document.querySelectorAll('.remove-item').forEach(button => {
-      button.addEventListener('click', function() {
-        const index = this.dataset.index;
-        warenkorb.splice(index, 1);
-        localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
-        aktualisiereWarenkorb();
+
+    cartTotalElem.textContent = `Gesamtsumme: €${summe.toFixed(2)}`;
+
+    bindCartButtons();
+  }
+
+  // 4) Event-Handler binden (Nach jedem Render)
+  function bindCartButtons() {
+    document.querySelectorAll('.increase-qty').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = +btn.dataset.index;
+        warenkorb[i].menge += 1;
+        updateStorageAndRender();
       });
     });
 
-    // Plus-Buttons
-    document.querySelectorAll('.increase-qty').forEach(button => {
-      button.addEventListener('click', function() {
-        const index = this.dataset.index;
-        warenkorb[index].menge += 1;
-        localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
-        aktualisiereWarenkorb();
+    document.querySelectorAll('.decrease-qty').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = +btn.dataset.index;
+        warenkorb[i].menge -= 1;
+        if (warenkorb[i].menge <= 0) warenkorb.splice(i, 1);
+        updateStorageAndRender();
       });
     });
 
-    // Minus-Buttons
-    document.querySelectorAll('.decrease-qty').forEach(button => {
-      button.addEventListener('click', function() {
-        const index = this.dataset.index;
-        warenkorb[index].menge -= 1;
-        if (warenkorb[index].menge <= 0) {
-          warenkorb.splice(index, 1); // Produkt entfernen
-        }
-        localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
-        aktualisiereWarenkorb();
-      });
-    });
-
-
-    cartTotal.textContent = `Gesamtsumme: €${summe.toFixed(2)}`;
-
-    // Entfernen-Buttons neu verbinden
-    document.querySelectorAll('.remove-item').forEach(button => {
-      button.addEventListener('click', function() {
-        const index = this.dataset.index;
-        warenkorb.splice(index, 1); // Produkt löschen
-        localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
-        aktualisiereWarenkorb(); // Warenkorb neu anzeigen
+    document.querySelectorAll('.remove-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = +btn.dataset.index;
+        warenkorb.splice(i, 1);
+        updateStorageAndRender();
       });
     });
   }
-  
-  aktualisiereWarenkorb();
 
-  const checkoutButton = document.getElementById('checkout-btn');
+  // 5) Speicher aktualisieren und neu rendern
+  function updateStorageAndRender() {
+    localStorage.setItem('warenkorb', JSON.stringify(warenkorb));
+    renderCart();
+  }
 
-  if (checkoutButton) {
-    checkoutButton.addEventListener('click', function() {
-      console.log("Checkout-Button wurde geklickt"); // Test
-      window.location.href = '../sites/checkout.php'; // Weiterleitung
+  // 6) Checkout-Button Weiterleitung
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      window.location.href = 'checkout.php';
     });
   } else {
-    console.error("Checkout-Button nicht gefunden!"); // Falls Button fehlt
+    console.error('Checkout-Button nicht gefunden!');
   }
+
+  // Erstrederung
+  renderCart();
 });
-
-
-
-
-/*
-// frontend/js/cart.js
-$(document).ready(function () {
-    loadCart();
-  
-    $('#checkout-btn').click(function () {
-      $.post('../../backend/logic/cartHandler.php', { action: 'checkout' }, function (response) {
-        alert(response.message);
-        if (response.success) location.reload();
-      }, 'json');
-    });
-  });
-  
-  function loadCart() {
-    $.get('../../backend/logic/cartHandler.php', { action: 'get' }, function (response) {
-      let tbody = $('#cart-table tbody');
-      tbody.empty();
-      let total = 0;
-  
-      response.cart.forEach(item => {
-        const subtotal = item.price * item.quantity;
-        total += subtotal;
-  
-        tbody.append(`
-          <tr>
-            <td>${item.name}</td>
-            <td>€${item.price.toFixed(2)}</td>
-            <td>
-              <input type="number" value="${item.quantity}" min="1"
-                     onchange="updateQuantity(${item.id}, this.value)">
-            </td>
-            <td>€${subtotal.toFixed(2)}</td>
-            <td>
-              <button onclick="removeItem(${item.id})">Entfernen</button>
-            </td>
-          </tr>
-        `);
-      });
-  
-      $('#cart-total').text('Gesamtsumme: €' + total.toFixed(2));
-    }, 'json');
-  }
-  
-  function updateQuantity(productId, quantity) {
-    $.post('../../backend/logic/cartHandler.php', { action: 'update', id: productId, quantity }, function () {
-      loadCart();
-    });
-  }
-  
-  function removeItem(productId) {
-    $.post('../../backend/logic/cartHandler.php', { action: 'remove', id: productId }, function () {
-      loadCart();
-    });
-  }
-
-    // cart.js oder direkt auf der Warenkorb-Seite einfügen
-  document.getElementById('checkout-btn').addEventListener('click', function() {
-    window.location.href = '../sites/checkout.html';
-  });*/
-
-  
