@@ -2,6 +2,7 @@
     session_start();
 } ?>
 <nav class="navbar">
+<<<<<<< HEAD
   <ul class="nav">
     <li class="nav-item">
       <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/index.php">HOME</a>
@@ -35,6 +36,34 @@
     <?php else: ?>
       <!-- Eingeloggter normaler User -->
       
+=======
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/index.php">HOME</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/sakurashine/rest-sample/sample/frontend/sites/produkte.php">PRODUKTE</a>
+      </li>
+      <?php 
+          if(isset($_SESSION['user'])){
+              echo "<li class='nav-item'>
+                <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/myAccount.php'>MEIN KONTO</a>
+              </li>";}
+        ?>
+        <?php 
+          if(!isset($_SESSION['user'])){
+              echo "<li class='nav-item'>
+            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/signup.php'>SIGN UP</a>
+          </li>";}
+        ?>
+        <?php 
+          if(!isset($_SESSION['user'])){
+              echo "<li class='nav-item'>
+            <a class='nav-link' href='/sakurashine/rest-sample/sample/frontend/sites/login.php'>SIGN IN</a>
+          </li>";}
+        ?>
+   
+>>>>>>> registered
       <li class="nav-item ms-auto">
         <div class="dropdown">
           <li class="nav-item">
@@ -43,6 +72,7 @@
             </a>
           </li>
 
+<<<<<<< HEAD
 
           <button class="btn btn-secondary dropdown-toggle" type="button"
                   id="dropdownMenuButton" data-bs-toggle="dropdown"
@@ -57,6 +87,18 @@
                 SIGN OUT
               </a>
             </li>
+=======
+                } 
+            ?>
+
+            <li><a class="dropdown-item" href="../sites/cart.php">CART</a></li>
+            <?php 
+              if (isset($_SESSION['user'])) {
+                  echo "<li><a class='dropdown-item' href='/sakurashine/rest-sample/sample/backend/logic/logout.php'>SIGN OUT</a></li>";
+              }
+            ?>
+            
+>>>>>>> registered
           </ul>
         </div>
       </li>

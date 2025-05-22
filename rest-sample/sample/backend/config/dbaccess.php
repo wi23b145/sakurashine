@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+
 $con = new mysqli('localhost', 'root', '', 'sakura_shine');
 
 if ($con->connect_error) {

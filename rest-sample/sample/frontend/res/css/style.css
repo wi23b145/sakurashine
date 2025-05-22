@@ -171,7 +171,6 @@ tbody, td, tfoot, th, thead, tr {
     padding-bottom: 5px;
 }
 
-<<<<<<< HEAD
 #cart{
     max-width: 25px;
     max-height: 25px;
@@ -183,7 +182,6 @@ tbody, td, tfoot, th, thead, tr {
     --bs-btn-hover-bg: none; 
     --bs-btn-hover-border-color: none; 
 }
-=======
 
 .errors { 
     color:red; 
@@ -203,4 +201,3 @@ tbody, td, tfoot, th, thead, tr {
     max-width:80px; 
 }
     
->>>>>>> checkoutfixed
