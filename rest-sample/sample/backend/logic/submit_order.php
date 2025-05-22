@@ -1,89 +1,112 @@
 <?php
-// submit_order.php
-header('Content-Type: application/json');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../config/dbaccess.php'; // $con
+
+// Rohdaten empfangen
 $data = json_decode(file_get_contents('php://input'), true);
 
-$name     = $data['name'] ?? '';
-$address  = $data['address'] ?? '';
-$plz      = $data['plz'] ?? '';
-$ort      = $data['ort'] ?? '';
-$zahlung  = $data['zahlungsmethode'] ?? '';
-$warenkorb = $data['warenkorb'] ?? [];
-$code     = $data['gutschein'] ?? '';
-
-if (!$name || !$address || !$plz || !$ort || !$zahlung || empty($warenkorb)) {
-    echo json_encode(['success'=>false, 'message'=>'Unvollständige Daten']);
+if (!$data) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Keine Daten empfangen']);
     exit;
 }
 
-// DB-Verbindung
-$pdo = new PDO("mysql:host=localhost;dbname=sakura_shine;charset=utf8mb4","root","");
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// 1) Summe berechnen
-$summe = 0;
-foreach ($warenkorb as $p) {
-    $summe += $p['menge'] * $p['preis'];
-}
-
-// 2) Gutschein validieren (falls angegeben)
-$rabattBetrag = 0.0;
-if ($code !== '') {
-    $stmt = $pdo->prepare("
-      SELECT typ, rabatt_prozent, geldwert, gueltig_bis, eingelöst
-        FROM Gutscheine
-       WHERE code = ? AND eingelöst = 0
-    ");
-    $stmt->execute([$code]);
-    $g = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$g) {
-        echo json_encode(['success'=>false, 'message'=>'Ungültiger oder bereits eingelöster Code']);
-        exit;
-    }
-    if ($g['gueltig_bis'] < date('Y-m-d')) {
-        echo json_encode(['success'=>false, 'message'=>'Gutschein abgelaufen']);
-        exit;
-    }
-
-    if ($g['typ'] === 'percent') {
-        $rabattBetrag = $summe * ($g['rabatt_prozent'] / 100);
-    } else { // fixed
-        $rabattBetrag = (float)$g['geldwert'];
-    }
-    // nie unter 0
-    if ($rabattBetrag > $summe) {
-        $rabattBetrag = $summe;
-    }
-    // Gutschein als eingelöst markieren
-    $upd = $pdo->prepare("UPDATE Gutscheine SET eingelöst = 1 WHERE code = ?");
-    $upd->execute([$code]);
-}
-
-// Finale Summe
-$finalSumme = $summe - $rabattBetrag;
-
-// 3) Bestellung in Bestellungen‐Tabelle
-$stmt = $pdo->prepare("
-  INSERT INTO Bestellungen
-    (user_id, bestellstatus, gesamtpreis, erstellt_am, zahlungsmethode)
-  VALUES (?, 'offen', ?, NOW(), ?)
-");
-// hier user_id ggf. aus Session
 $userId = $_SESSION['user']['id'] ?? null;
-$stmt->execute([$userId, $finalSumme, $zahlung]);
-$bid = $pdo->lastInsertId();
-
-// 4) Positionen speichern
-$stmtPos = $pdo->prepare("
-  INSERT INTO Bestellpositionen
-    (bestellung_id, produkt_id, menge, einzelpreis)
-  VALUES (?, ?, ?, ?)
-");
-foreach ($warenkorb as $p) {
-    $stmtPos->execute([$bid, $p['id'], $p['menge'], $p['preis']]);
+if (!$userId) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Nicht eingeloggt']);
+    exit;
 }
 
-echo json_encode([
-  'success'    => true,
-  'finalSumme' => number_format($finalSumme, 2, ',', '.')
-]);
+// Pflichtfelder prüfen
+if (empty($data['name']) || empty($data['address']) || empty($data['plz']) || empty($data['ort']) || empty($data['zahlungsmethode']) || empty($data['warenkorb'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Unvollständige Daten']);
+    exit;
+}
+
+$name = $data['name'];
+$address = $data['address'];
+$plz = $data['plz'];
+$ort = $data['ort'];
+$zahlungsmethode = $data['zahlungsmethode'];
+$warenkorb = $data['warenkorb'];
+$gutschein = $data['gutschein'] ?? '';
+
+$bestellstatus = 'offen'; // Standard-Status
+
+// Summe berechnen
+$sumOriginal = 0.0;
+foreach ($warenkorb as $p) {
+    $sumOriginal += $p['preis'] * $p['menge'];
+}
+
+// Summe berechnen
+$sumOriginal = 0.0;
+foreach ($warenkorb as $p) {
+    $sumOriginal += $p['preis'] * $p['menge'];
+}
+
+// Gutschein-Rabatt anwenden, falls Gutschein übergeben wurde
+if (!empty($gutschein)) {
+    $stmtVoucher = $con->prepare("SELECT typ, rabatt_prozent, geldwert, gueltig_bis, eingelöst FROM Gutscheine WHERE code = ?");
+    if (!$stmtVoucher) throw new Exception("Prepare Gutschein fehlgeschlagen: " . $con->error);
+    $stmtVoucher->bind_param('s', $gutschein);
+    $stmtVoucher->execute();
+    $voucher = $stmtVoucher->get_result()->fetch_assoc();
+    $stmtVoucher->close();
+
+    $heute = date('Y-m-d');
+    if ($voucher && $voucher['eingelöst'] == 0 && $voucher['gueltig_bis'] >= $heute) {
+        if ($voucher['typ'] === 'percent') {
+            $sumFinal = $sumOriginal * (1 - $voucher['rabatt_prozent'] / 100);
+        } else {
+            $sumFinal = $sumOriginal - $voucher['geldwert'];
+        }
+        if ($sumFinal < 0) $sumFinal = 0;
+    } else {
+        // Gutschein ungültig oder abgelaufen
+        $sumFinal = $sumOriginal;
+    }
+} else {
+    $sumFinal = $sumOriginal;
+}
+
+$con->begin_transaction();
+
+try {
+    // Insert in Bestellungen
+    $stmt = $con->prepare("INSERT INTO Bestellungen (user_id, name, adresse, plz, ort, bestellstatus, zahlungsmethode, gesamtpreis, erstellt_am) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    if (!$stmt) throw new Exception("Prepare fehlgeschlagen: " . $con->error);
+
+    $bindResult = $stmt->bind_param(
+        'issssssd',
+        $userId,
+        $name,
+        $address,
+        $plz,
+        $ort,
+        $bestellstatus,
+        $zahlungsmethode,
+        $sumFinal
+    );
+    if (!$bindResult) throw new Exception("bind_param fehlgeschlagen: " . $stmt->error);
+
+    $execResult = $stmt->execute();
+    if (!$execResult) throw new Exception("execute fehlgeschlagen: " . $stmt->error);
+
+    $bestellung_id = $stmt->insert_id; // ID der neuen Bestellung
+    $stmt->close();
+
+    // Hier kannst du dann die Bestellpositionen speichern...
+
+    $con->commit();
+
+    echo json_encode(['success' => true, 'bestellung_id' => $bestellung_id]);
+} catch (Exception $e) {
+    $con->rollback();
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Fehler: ' . $e->getMessage()]);
+}

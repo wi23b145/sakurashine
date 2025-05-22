@@ -1,5 +1,8 @@
 <?php
-require 'db.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require '../config/dbaccess.php';
 
 $sql = "SELECT r.*, b.kunde_name 
         FROM rechnungen r

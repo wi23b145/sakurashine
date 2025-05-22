@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require 'db.php';
 
 $stmt = $pdo->query("SELECT * FROM bestellungen ORDER BY bestell_datum DESC");
